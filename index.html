@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مسار — منصة التعلّم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --ink: #15110c; --ink-2: #1c1710; --ink-3: #241d14;
+    --line: #382e20; --paper: #f1e7d3;
+    --muted: #9c9182; --muted-2: #6f6656;
+    --brass: #d3a24f; --teal: #5f9284;
+    --fire1: #f4a340; --fire2: #e8642e; --fire3: #c73a1f;
+    --bg: var(--ink); --surface: var(--ink-2); --surface2: var(--ink-3);
+    --brand: var(--brass); --brand-soft: rgba(211,162,79,.12);
+    --ok-bg: rgba(95,146,132,.15); --ok-fg: #8fc3b3;
+    --warn-bg: rgba(211,162,79,.15); --warn-fg: var(--brass);
+    --bad-bg: rgba(200,80,80,.15); --bad-fg: #e08585;
+    --shadow: 0 14px 34px -18px rgba(0,0,0,.7);
+    --font: 'IBM Plex Sans Arabic', sans-serif;
+    --display: 'Amiri', serif;
+    --mono: 'IBM Plex Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--ink); color: var(--paper); font-family: var(--font); line-height: 1.9; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+h1, h2, h3, h4 { font-family: var(--display); line-height: 1.35; font-weight: 700; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 6px; }
+
+/* ============ BUTTONS ============ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; border-radius: 2px; padding: 11px 22px; font-weight: 600; font-size: 14px; background: var(--brass); color: var(--ink); transition: all .25s ease; letter-spacing: .3px; white-space: nowrap; font-family: var(--font); }
+.btn:hover { background: #e3b562; box-shadow: 0 8px 22px -10px rgba(211,162,79,.6); transform: translateY(-1px); }
+.btn.soft { background: transparent; color: var(--brass); border-color: var(--brass); }
+.btn.soft:hover { background: rgba(211,162,79,.1); }
+.btn.ghost { background: transparent; color: var(--muted); border-color: var(--line); }
+.btn.ghost:hover { color: var(--paper); border-color: var(--muted); }
+.btn.ok { background: var(--teal); color: var(--ink); }
+.btn.bad { background: #c05050; color: var(--paper); }
+.btn.sm { padding: 7px 14px; font-size: 13px; }
+.btn.block { width: 100%; }
+.iconbtn { width: 36px; height: 36px; border: 1px solid var(--line); background: transparent; display: grid; place-items: center; color: var(--muted); border-radius: 2px; transition: all .2s; }
+.iconbtn:hover { color: var(--brass); border-color: var(--brass); }
+
+/* ============ FORMS ============ */
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field > label, .lbl { font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: .3px; }
+.inp { position: relative; display: flex; align-items: center; }
+.inp > svg { position: absolute; inset-inline-start: 13px; color: var(--muted); pointer-events: none; }
+.inp .input { padding-inline-start: 42px; }
+.input, .select, .textarea { width: 100%; background: var(--ink-3); border: 1px solid var(--line); border-radius: 2px; padding: 11px 14px; color: var(--paper); transition: border-color .2s, box-shadow .2s; font-family: var(--font); font-size: 15px; }
+.textarea { min-height: 90px; resize: vertical; }
+.input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(211,162,79,.12); }
+.filebox { display: flex; align-items: center; gap: 12px; border: 1px dashed var(--line); border-radius: 2px; padding: 14px; background: var(--ink-3); cursor: pointer; transition: border-color .2s; }
+.filebox:hover { border-color: var(--brass); }
+.filebox b { display: block; font-weight: 600; font-size: 15px; color: var(--paper); }
+.filebox span { font-size: 13px; color: var(--muted); }
+.filebox input { display: none; }
+.ficon { width: 42px; height: 42px; border-radius: 2px; background: rgba(211,162,79,.1); color: var(--brass); display: grid; place-items: center; flex: none; border: 1px solid rgba(211,162,79,.2); }
+.err { background: var(--bad-bg); color: var(--bad-fg); border-radius: 2px; padding: 12px 14px; font-size: 14px; margin-bottom: 14px; border-right: 3px solid var(--bad-fg); }
+.note { background: var(--warn-bg); color: var(--warn-fg); border-radius: 2px; padding: 12px 14px; font-size: 14px; margin-bottom: 14px; display: flex; gap: 10px; border-right: 3px solid var(--brass); }
+.note.good { background: var(--ok-bg); color: var(--ok-fg); border-right-color: var(--teal); }
+.note.bad { background: var(--bad-bg); color: var(--bad-fg); border-right-color: var(--bad-fg); }
+
+/* ============ BADGES ============ */
+.badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 2px; padding: 4px 11px; font-size: 12px; font-weight: 600; letter-spacing: .3px; border: 1px solid; }
+.badge.pending { background: var(--warn-bg); color: var(--warn-fg); border-color: rgba(211,162,79,.3); }
+.badge.accepted { background: var(--ok-bg); color: var(--ok-fg); border-color: rgba(95,146,132,.3); }
+.badge.rejected { background: var(--bad-bg); color: var(--bad-fg); border-color: rgba(200,80,80,.3); }
+.badge.plain { background: transparent; color: var(--muted); border-color: var(--line); }
+.pts { display: inline-flex; align-items: center; gap: 7px; background: transparent; color: var(--brass); border: 1px solid var(--brass); border-radius: 2px; padding: 4px 12px; font-weight: 700; font-family: var(--mono); font-size: 13px; letter-spacing: .5px; }
+.card { background: var(--ink-2); border: 1px solid var(--line); border-radius: 2px; box-shadow: var(--shadow); }
+
+/* ============ FIRE / STREAK ============ */
+.fire {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--mono); font-weight: 700; font-size: 14px;
+    padding: 3px 10px; border-radius: 2px;
+    border: 1px solid;
+    transition: all .3s;
+    position: relative;
+}
+.fire.lvl-0 { color: var(--muted); border-color: var(--line); background: rgba(255,255,255,.02); }
+.fire.lvl-1 { color: #f4a340; border-color: rgba(244,163,64,.4); background: rgba(244,163,64,.08); }
+.fire.lvl-2 { color: #f4a340; border-color: #f4a340; background: rgba(244,163,64,.15); box-shadow: 0 0 12px -3px rgba(244,163,64,.5); }
+.fire.lvl-3 { color: #e8642e; border-color: #e8642e; background: rgba(232,100,46,.18); box-shadow: 0 0 16px -3px rgba(232,100,46,.6); }
+.fire.lvl-4 { color: #ff7a2e; border-color: #ff7a2e; background: rgba(255,122,46,.22); box-shadow: 0 0 20px -3px rgba(255,122,46,.7); animation: flicker 2s infinite; }
+.fire.lvl-5 { color: #ff4a1a; border-color: #ff4a1a; background: rgba(255,74,26,.25); box-shadow: 0 0 24px -3px rgba(255,74,26,.8); animation: flicker 1.4s infinite; }
+@keyframes flicker {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .85; transform: scale(1.05); }
+}
+
+/* ستريك البطاقة الكبيرة (رحلة الستريك) */
+.streak-hero {
+    background: linear-gradient(135deg, var(--ink-2) 0%, #2a1a0a 100%);
+    border: 1px solid rgba(244,163,64,.3);
+    border-top: 3px solid #f4a340;
+    padding: 30px;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 26px;
+    align-items: center;
+    margin-bottom: 26px;
+    position: relative;
+    overflow: hidden;
+}
+.streak-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(244,163,64,.1) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(232,100,46,.08) 0%, transparent 45%);
+    pointer-events: none;
+}
+.streak-hero > * { position: relative; z-index: 1; }
+.streak-flame-big {
+    width: 90px; height: 90px;
+    display: grid; place-items: center;
+    font-size: 56px;
+    filter: drop-shadow(0 0 20px rgba(244,163,64,.5));
+    animation: flicker 1.6s infinite;
+    border: 1px solid rgba(244,163,64,.3);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244,163,64,.15) 0%, transparent 70%);
+}
+.streak-hero h2 { font-size: 28px; color: var(--paper); margin-bottom: 6px; }
+.streak-hero p { color: var(--muted); font-size: 14.5px; }
+.streak-hero .stat-big {
+    text-align: center;
+    background: rgba(244,163,64,.08);
+    border: 1px solid rgba(244,163,64,.3);
+    border-radius: 2px;
+    padding: 14px 26px;
+}
+.streak-hero .stat-big b { font: 700 42px var(--display); display: block; line-height: 1; color: #f4a340; }
+.streak-hero .stat-big small { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; letter-spacing: 2px; }
+@media (max-width: 640px) { .streak-hero { grid-template-columns: 1fr; text-align: center; } .streak-flame-big { margin: 0 auto; } }
+
+/* خريطة الستريك (مسار الشعلة) */
+.streak-path {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+}
+.streak-node {
+    padding: 18px 14px;
+    background: var(--ink-3);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    text-align: center;
+    transition: all .3s;
+    position: relative;
+}
+.streak-node.reached {
+    background: rgba(244,163,64,.06);
+    border-color: rgba(244,163,64,.4);
+}
+.streak-node.reached::after {
+    content: '';
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    background: #f4a340;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #f4a340;
+}
+.streak-node .ic { font-size: 32px; margin-bottom: 8px; filter: grayscale(.8); opacity: .5; }
+.streak-node.reached .ic { filter: none; opacity: 1; }
+.streak-node b { display: block; color: var(--paper); font-family: var(--display); font-size: 15px; margin-bottom: 3px; }
+.streak-node small { color: var(--muted); font-size: 12px; font-family: var(--mono); }
+
+/* ============ AUTH ============ */
+.auth { min-height: 100vh; display: grid; grid-template-columns: minmax(360px, 520px) 1fr; }
+.auth-form { padding: 36px clamp(20px, 5vw, 64px); display: flex; flex-direction: column; justify-content: center; max-width: 620px; width: 100%; margin: 0 auto; }
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.logo { width: 46px; height: 46px; border: 1px solid var(--brass); display: grid; place-items: center; color: var(--brass); border-radius: 2px; position: relative; }
+.logo::before { content: ''; position: absolute; inset: 3px; border: 1px solid rgba(211,162,79,.3); border-radius: 1px; }
+.brand b { font-family: var(--display); font-size: 24px; color: var(--paper); letter-spacing: .5px; }
+.brand small { display: block; color: var(--muted); font-size: 12px; margin-top: -4px; letter-spacing: 1px; }
+.auth h1 { font-size: 30px; margin-bottom: 6px; color: var(--paper); }
+.auth .lead { color: var(--muted); margin-bottom: 22px; font-size: 15px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--ink-3); padding: 4px; border-radius: 2px; gap: 2px; margin-bottom: 18px; border: 1px solid var(--line); }
+.seg button { border: 0; background: transparent; border-radius: 2px; padding: 10px; font-weight: 600; color: var(--muted); transition: all .2s; font-size: 14px; }
+.seg button.on { background: var(--brass); color: var(--ink); }
+.demo { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); }
+.demo p { font-size: 13.5px; color: var(--muted); margin-bottom: 10px; }
+.demo .row { display: flex; gap: 10px; flex-wrap: wrap; }
+.auth-art { position: relative; overflow: hidden; background: var(--ink-2); border-inline-start: 1px solid var(--line); color: var(--paper); display: flex; align-items: center; justify-content: center; padding: 40px; }
+.auth-art::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% 30%, rgba(211,162,79,.1) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(95,146,132,.08) 0%, transparent 40%); pointer-events: none; }
+.auth-art .inner { width: min(440px, 100%); position: relative; z-index: 1; }
+.auth-art h2 { font-size: 32px; margin-bottom: 10px; line-height: 1.4; color: var(--paper); }
+.auth-art p { color: var(--muted); max-width: 34ch; margin-bottom: 20px; font-size: 15px; }
+@media (max-width: 900px) { .auth { grid-template-columns: 1fr; } .auth-art { display: none; } }
+
+/* ============ JOURNEY MAP ============ */
+.jm { width: 100%; height: auto; display: block; overflow: visible; }
+.jm-track { fill: none; stroke: var(--line); stroke-width: 2; stroke-linecap: round; stroke-dasharray: .012 .02; }
+.jm-fill { fill: none; stroke-width: 2; stroke-linecap: round; }
+.jm.dark .jm-track { stroke: rgba(211,162,79,.2); }
+.jm.anim .jm-fill { stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: draw 2.6s .2s cubic-bezier(.6,.1,.3,1) forwards; }
+.jm-dot { fill: var(--ink-3); stroke: var(--line); stroke-width: 2; }
+.jm.dark .jm-dot { fill: var(--ink-3); stroke: rgba(211,162,79,.3); }
+.done .jm-dot { fill: var(--brass); stroke: none; }
+.now .jm-dot { fill: var(--teal); stroke: none; }
+.jm-num { font: 600 15px var(--mono); text-anchor: middle; dominant-baseline: central; fill: var(--muted); }
+.done .jm-num { fill: var(--ink) !important; }
+.now .jm-num { fill: var(--ink) !important; }
+.jm-label { font: 600 14px var(--display); fill: var(--paper); }
+.jm-sub { font: 400 12px var(--font); fill: var(--muted); }
+.todo .jm-label, .todo .jm-sub { opacity: .5; }
+.jm-ring { fill: none; stroke: var(--teal); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: pulse 2s ease-out infinite; }
+.jm.anim .jm-node { opacity: 0; animation: pop .5s calc(var(--i) * .32s + .35s) ease-out forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes pulse { 0% { transform: scale(.85); opacity: .9; } 100% { transform: scale(1.35); opacity: 0; } }
+
+/* ============ SHELL ============ */
+.app { display: grid; grid-template-columns: 268px 1fr; min-height: 100vh; }
+.side { position: sticky; top: 0; height: 100vh; padding: 22px 16px; background: var(--ink-2); border-inline-end: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.side .brand { margin: 0 8px 22px; }
+.nav { display: flex; flex-direction: column; gap: 2px; flex: 1; overflow: auto; padding-top: 8px; border-top: 1px solid var(--line); }
+.nav button { display: flex; align-items: center; gap: 12px; border: 0; background: transparent; padding: 11px 14px; border-radius: 2px; font-weight: 500; color: var(--muted); text-align: start; transition: all .2s; font-size: 14px; position: relative; }
+.nav button::before { content: ''; position: absolute; inset-inline-start: 0; top: 50%; transform: translateY(-50%); width: 2px; height: 0; background: var(--brass); transition: height .25s; }
+.nav button:hover { color: var(--paper); background: rgba(211,162,79,.04); }
+.nav button.on { color: var(--brass); background: rgba(211,162,79,.06); font-weight: 600; }
+.nav button.on::before { height: 60%; }
+.nav .count { margin-inline-start: auto; background: var(--brass); color: var(--ink); border-radius: 2px; font-size: 11px; padding: 1px 7px; font-weight: 700; font-family: var(--mono); }
+.nav .count.fire-count { background: linear-gradient(135deg, #f4a340, #e8642e); color: #fff; }
+
+.me { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 2px; background: var(--ink-3); border: 1px solid var(--line); }
+.av { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--brass); color: var(--brass); display: grid; place-items: center; font-weight: 700; font-family: var(--display); flex: none; font-size: 15px; }
+.me b { display: block; font-size: 14px; line-height: 1.3; color: var(--paper); }
+.me small { color: var(--muted); font-size: 12px; letter-spacing: .5px; }
+.me .tools { margin-inline-start: auto; display: flex; gap: 4px; }
+.me .iconbtn { width: 30px; height: 30px; border-radius: 2px; }
+.main { padding: 32px clamp(16px, 3.4vw, 48px) 60px; min-width: 0; }
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.head h1 { font-size: 32px; color: var(--paper); }
+.head p { color: var(--muted); margin-top: 4px; font-size: 14px; }
+
+@media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .side { position: fixed; inset: auto 0 0 0; top: auto; height: auto; flex-direction: row; padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); z-index: 30; border-top: 1px solid var(--line); border-inline-end: 0; }
+    .side .brand, .side .me { display: none; }
+    .side .nav { flex-direction: row; overflow-x: auto; justify-content: flex-start; gap: 2px; border-top: 0; padding-top: 0; }
+    .side .nav button { flex-direction: column; gap: 3px; font-size: 11px; padding: 7px 10px; min-width: 64px; align-items: center; text-align: center; position: relative; }
+    .side .nav button::before { display: none; }
+    .side .nav button.on { background: rgba(211,162,79,.1); }
+    .side .nav .count { position: absolute; top: 2px; inset-inline-end: 8px; font-size: 10px; padding: 0 5px; }
+    .main { padding-bottom: 110px; padding-top: 16px; }
+    .mobile-bar { display: flex !important; }
+}
+.mobile-bar { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+
+/* ============ STATS ============ */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 26px; }
+.stat { padding: 20px; display: flex; align-items: center; gap: 14px; border-top: 2px solid var(--c, var(--brass)); transition: all .25s; }
+.stat:hover { transform: translateY(-3px); border-color: var(--brass); }
+.stat .si { width: 46px; height: 46px; border-radius: 2px; display: grid; place-items: center; background: rgba(211,162,79,.08); color: var(--c, var(--brass)); border: 1px solid rgba(211,162,79,.15); }
+.stat b { font: 700 26px var(--display); display: block; line-height: 1.1; color: var(--paper); }
+.stat span { color: var(--muted); font-size: 13px; letter-spacing: .3px; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 1100px) { .cols { grid-template-columns: 1fr; } }
+.panel { padding: 22px; }
+.panel h3 { font-size: 19px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--paper); }
+
+/* ============ HERO ============ */
+.hero { padding: 32px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; background: var(--ink-2); border: 1px solid var(--line); border-top: 3px solid var(--brass); margin-bottom: 28px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 15% 20%, rgba(211,162,79,.08) 0%, transparent 40%), radial-gradient(circle at 85% 80%, rgba(95,146,132,.06) 0%, transparent 40%); pointer-events: none; }
+.hero > * { position: relative; z-index: 1; }
+.hero h1 { font-size: 30px; margin-bottom: 6px; color: var(--paper); }
+.hero p { color: var(--muted); font-size: 14px; }
+.hero .bar { margin-top: 18px; height: 4px; border-radius: 0; background: var(--ink-3); overflow: hidden; max-width: 420px; border: 1px solid var(--line); }
+.hero .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--brass), var(--teal)); transition: width .5s ease; }
+.hero small { display: block; margin-top: 10px; color: var(--muted); font-size: 13px; }
+.hero .big { text-align: center; background: var(--ink-3); border: 1px solid var(--line); border-radius: 2px; padding: 18px 30px; }
+.hero .big b { font: 700 44px var(--display); display: block; line-height: 1; color: var(--brass); }
+.hero .big::after { content: 'نقطة'; display: block; margin-top: 6px; color: var(--muted); font-size: 13px; letter-spacing: 2px; }
+@media (max-width: 640px) { .hero { grid-template-columns: 1fr; } }
+
+/* ============ UNITS ============ */
+.units { display: flex; flex-direction: column; gap: 16px; }
+.unit { background: var(--ink-2); border: 1px solid var(--line); border-right: 3px solid var(--u, var(--brass)); border-radius: 2px; overflow: hidden; transition: all .25s; }
+.unit:hover { border-color: var(--u, var(--brass)); }
+.unit-head { display: flex; gap: 14px; align-items: center; width: 100%; text-align: start; padding: 18px 22px; background: none; border: 0; transition: background .2s; }
+.unit-head:hover { background: rgba(211,162,79,.03); }
+.unit-num { width: 46px; height: 46px; border: 1px solid var(--u, var(--brass)); color: var(--u, var(--brass)); font: 700 20px var(--mono); display: grid; place-items: center; flex: none; border-radius: 2px; background: rgba(211,162,79,.04); }
+.unit-head h3 { font-size: 19px; color: var(--paper); }
+.unit-head p { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+.unit-head .chev { margin-inline-start: auto; color: var(--muted); transition: transform .25s; flex: none; }
+.unit.open .chev { transform: rotate(180deg); }
+.prog { height: 3px; background: var(--ink-3); margin-top: 10px; overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--u, var(--brass)); transition: width .4s; }
+.collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+.collapse.open { grid-template-rows: 1fr; }
+.collapse > div { overflow: hidden; }
+.unit-body { padding: 0 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+.cat { border: 1px solid var(--line); border-radius: 2px; background: var(--ink); }
+.cat-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 13px 15px; background: none; border: 0; text-align: start; font-weight: 500; color: var(--paper); font-size: 14.5px; }
+.cat-head:hover { background: rgba(211,162,79,.03); }
+.cat-head .ci { width: 34px; height: 34px; border: 1px solid var(--line); color: var(--brass); display: grid; place-items: center; flex: none; border-radius: 2px; }
+.cat-head .n { margin-inline-start: auto; color: var(--muted); font-size: 13px; font-family: var(--mono); }
+.cat-head .chev { transition: transform .25s; color: var(--muted); }
+.cat.open .cat-head .chev { transform: rotate(180deg); }
+.cat-list { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+.item { display: flex; align-items: center; gap: 12px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 2px; padding: 12px 14px; transition: border-color .2s; }
+.item:hover { border-color: rgba(211,162,79,.3); }
+.item .it { min-width: 0; flex: 1; }
+.item .it b { display: block; font-weight: 600; font-size: 14.5px; color: var(--paper); }
+.item .it span { display: block; font-size: 12.5px; color: var(--muted); }
+.thumb { width: 56px; height: 42px; border-radius: 2px; object-fit: cover; border: 1px solid var(--line); padding: 0; background: var(--ink-3); overflow: hidden; flex: none; cursor: pointer; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hw { display: flex; flex-direction: column; gap: 10px; background: var(--ink-2); border: 1px solid var(--line); border-right: 2px solid var(--teal); border-radius: 2px; padding: 14px; }
+.hw .top { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.hw .top b { color: var(--paper); font-size: 15px; }
+.hw .cmt { background: var(--ink-3); border-right: 2px solid var(--brass); border-radius: 2px; padding: 10px 14px; font-size: 13.5px; color: var(--muted); }
+.hw .cmt b { color: var(--brass); font-weight: 600; }
+
+.empty { text-align: center; color: var(--muted); padding: 30px 16px; font-size: 14px; border: 1px dashed var(--line); border-radius: 2px; background: var(--ink); }
+.empty b { display: block; color: var(--paper); font-family: var(--display); margin-bottom: 6px; font-size: 18px; }
+
+/* ============ LISTS ============ */
+.list { display: flex; flex-direction: column; gap: 10px; }
+.row { display: flex; align-items: center; gap: 14px; background: var(--ink-2); border: 1px solid var(--line); border-radius: 2px; padding: 14px 18px; flex-wrap: wrap; transition: border-color .2s; }
+.row:hover { border-color: rgba(211,162,79,.25); }
+.row .grow { flex: 1; min-width: 180px; }
+.row .grow b { display: block; font-weight: 600; color: var(--paper); }
+.row .grow span { font-size: 13px; color: var(--muted); }
+.row .acts { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.row .select { width: auto; min-width: 130px; padding: 8px 12px; }
+
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.tab { border: 1px solid var(--line); background: transparent; border-radius: 2px; padding: 8px 16px; font-weight: 500; color: var(--muted); transition: all .2s; font-size: 13.5px; }
+.tab:hover { color: var(--paper); border-color: var(--muted); }
+.tab.on { background: var(--brass); color: var(--ink); border-color: var(--brass); font-weight: 600; }
+.tab.u.on { background: var(--u, var(--brass)); border-color: var(--u, var(--brass)); color: var(--ink); }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .two { grid-template-columns: 1fr; } }
+
+.subcard { padding: 20px; display: flex; flex-direction: column; gap: 12px; border-right: 2px solid var(--line); }
+.subcard .meta { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+.subcard .meta b { color: var(--paper); font-size: 16px; }
+.subcard .txt { background: var(--ink-3); border-right: 2px solid var(--brass); border-radius: 2px; padding: 10px 14px; font-size: 14px; color: var(--muted); }
+.subcard .txt b { color: var(--brass); }
+
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chip { border: 1px solid var(--line); background: transparent; border-radius: 2px; padding: 6px 14px; font-weight: 600; font-size: 13px; color: var(--muted); font-family: var(--mono); transition: all .2s; }
+.chip:hover { border-color: var(--brass); color: var(--brass); }
+.chip.on { background: var(--brass); color: var(--ink); border-color: var(--brass); }
+
+.lb { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.lb:last-child { border: 0; }
+.lb .rk { width: 30px; font: 700 16px var(--mono); color: var(--muted); text-align: center; }
+.lb .rk::before { content: '#'; opacity: .5; margin-inline-end: 1px; }
+.lb .bar { height: 4px; background: var(--ink-3); overflow: hidden; margin-top: 6px; }
+.lb .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--brass), var(--teal)); transition: width .5s; }
+
+/* ============ JOURNEY ============ */
+.jgrid { display: grid; grid-template-columns: minmax(0, 380px) 1fr; gap: 22px; align-items: start; }
+@media (max-width: 900px) { .jgrid { grid-template-columns: 1fr; } }
+.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.bdg { padding: 16px; border-radius: 2px; background: var(--ink-3); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; font-size: 13.5px; transition: all .25s; }
+.bdg:hover { border-color: var(--brass); transform: translateY(-2px); }
+.bdg .bi { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: rgba(211,162,79,.1); color: var(--brass); border: 1px solid var(--brass); }
+.bdg b { color: var(--paper); font-family: var(--display); font-size: 15px; }
+.bdg.off { opacity: .4; }
+.bdg.off .bi { background: var(--ink-3); color: var(--muted); border-color: var(--line); }
+.bdg small { color: var(--muted); font-size: 12px; }
+.log { display: flex; flex-direction: column; }
+.log .l { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.log .l:last-child { border: 0; }
+.log .amt { font: 700 15px var(--mono); min-width: 56px; text-align: center; border-radius: 2px; padding: 4px 8px; border: 1px solid; }
+.amt.plus { background: rgba(95,146,132,.1); color: var(--teal); border-color: rgba(95,146,132,.3); }
+.amt.minus { background: rgba(200,80,80,.1); color: #e08585; border-color: rgba(200,80,80,.3); }
+
+/* ============ GROUPS (NEW) ============ */
+.group-card {
+    padding: 22px;
+    border-top: 3px solid var(--gc, var(--brass));
+    display: flex; flex-direction: column; gap: 14px;
+    transition: all .25s;
+    position: relative;
+}
+.group-card:hover { transform: translateY(-4px); border-color: var(--gc, var(--brass)); }
+.group-header {
+    display: flex; align-items: center; gap: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+.group-emblem {
+    width: 56px; height: 56px;
+    border: 2px solid var(--gc, var(--brass));
+    color: var(--gc, var(--brass));
+    display: grid; place-items: center;
+    font-size: 26px;
+    border-radius: 2px;
+    flex: none;
+    background: rgba(211,162,79,.05);
+    position: relative;
+}
+.group-emblem::before {
+    content: ''; position: absolute; inset: 4px;
+    border: 1px dashed rgba(211,162,79,.25);
+    border-radius: 1px;
+}
+.group-header h3 { font-size: 20px; color: var(--paper); margin-bottom: 3px; }
+.group-header p { font-size: 12.5px; color: var(--muted); font-family: var(--mono); letter-spacing: .5px; }
+.group-streak-total {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, rgba(244,163,64,.12), rgba(232,100,46,.12));
+    border: 1px solid rgba(244,163,64,.35);
+    padding: 6px 14px; border-radius: 2px;
+    color: #f4a340;
+    font-weight: 700; font-family: var(--mono);
+    font-size: 13px;
+}
+.group-members {
+    display: flex; flex-direction: column; gap: 8px;
+}
+.member-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    background: var(--ink-3);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transition: all .2s;
+}
+.member-row:hover { border-color: rgba(211,162,79,.3); }
+.member-row .av { width: 34px; height: 34px; font-size: 13px; }
+.member-row .info { flex: 1; min-width: 0; }
+.member-row .info b { display: block; color: var(--paper); font-size: 14px; }
+.member-row .info span { font-size: 12px; color: var(--muted); }
+.group-empty {
+    text-align: center; padding: 16px;
+    color: var(--muted); font-size: 13.5px;
+    border: 1px dashed var(--line);
+    border-radius: 2px;
+}
+
+/* ============ MODAL & TOAST ============ */
+.veil { position: fixed; inset: 0; background: rgba(15, 11, 9, .85); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 16px; z-index: 60; animation: fadeIn .2s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--ink-2); border: 1px solid var(--line); border-top: 3px solid var(--brass); border-radius: 2px; width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; padding: 26px; box-shadow: 0 30px 70px -20px rgba(0,0,0,.8); }
+.modal.wide { width: min(900px, 100%); }
+.modal h3 { font-size: 21px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--paper); }
+.modal .foot { display: flex; gap: 10px; justify-content: flex-start; margin-top: 14px; flex-wrap: wrap; }
+.viewer img { width: 100%; border-radius: 2px; display: block; border: 1px solid var(--line); }
+.viewer iframe { width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 2px; background: var(--ink-3); }
+
+.toasts { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); inset-inline: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 80; pointer-events: none; }
+.toast { background: var(--ink-3); color: var(--paper); border: 1px solid var(--brass); padding: 12px 22px; border-radius: 2px; font-weight: 500; box-shadow: 0 14px 30px -10px rgba(0,0,0,.6); animation: pop .25s ease-out; font-size: 14px; }
+.toast.bad { border-color: #c05050; color: #e08585; }
+.toast.fire { border-color: #f4a340; color: #f4a340; }
+@media (max-width: 900px) { .toasts { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; transition-duration: .001ms !important; }
+    .jm.anim .jm-fill { stroke-dashoffset: 0; }
+    .jm.anim .jm-node { opacity: 1; }
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script>
+const {useState,useEffect,useMemo,createContext,useContext} = React;
+const html = htm.bind(React.createElement);
+const Ctx = createContext(null);
+const useApp = () => useContext(Ctx);
+const cx = (...a) => a.filter(Boolean).join(' ');
+const uid = () => Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3);
+const fmtDate = t => { try { return new Date(t).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{day:'numeric',month:'short'}); } catch(e){ return ''; } };
+const KEY='masar.platform.v1', SKEY='masar.session.v1', TKEY='masar.theme.v1';
+const store = {
+  get(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+
+/* ---------- constants ---------- */
+const UNIT_COLORS=['#d3a24f','#c9845c','#b5744e','#8fa885','#5f9284','#7a8aa8','#a588b5'];
+const GROUP_COLORS=['#d3a24f','#5f9284','#c9845c','#8fa885','#a588b5','#7a8aa8','#b5744e','#e8642e'];
+const GROUP_EMBLEMS=['⚔️','🛡️','🏹','⚡','🌟','🔮','🦅','🐎','🦁','🔥'];
+const KINDS={
+  link:{label:'روابط خارجية',one:'رابط',icon:'link',empty:'لم تُضف روابط بعد'},
+  pdf:{label:'ملفات PDF',one:'ملف PDF',icon:'file',empty:'لم تُضف ملفات PDF بعد'},
+  image:{label:'صور',one:'صورة',icon:'image',empty:'لم تُضف صور بعد'},
+  video:{label:'فيديو',one:'فيديو',icon:'play',empty:'لم تُضف مقاطع فيديو بعد'},
+  homework:{label:'الواجبات',one:'واجب',icon:'edit',empty:'لا توجد واجبات في هذه الوحدة'},
+  file:{label:'إضافة ملف',one:'ملف',icon:'upload',empty:'لم ترفعي أي ملف بعد'}
+};
+const LEVELS=[
+  {min:0,name:'مستكشفة'},{min:50,name:'مثابرة'},{min:120,name:'متألقة'},{min:250,name:'مبدعة'},{min:400,name:'نجمة مسار'}
+];
+/* مستويات الشعلة (الستريك) */
+const STREAK_LEVELS=[
+  {min:0, name:'بلا شعلة',   icon:'·',  fire:0},
+  {min:1, name:'شرارة',      icon:'✨', fire:1},
+  {min:3, name:'لهب صغير',   icon:'🔥', fire:2},
+  {min:5, name:'لهب قوي',    icon:'🔥', fire:3},
+  {min:7, name:'شعلة متوهجة',icon:'🔥', fire:4},
+  {min:10,name:'نار لا تُطفأ',icon:'🔥', fire:5}
+];
+const streakLevel = s => { let k=0; STREAK_LEVELS.forEach((l,i)=>{ if(s>=l.min) k=i; }); return k; };
+const streakInfo = s => STREAK_LEVELS[streakLevel(s)];
+
+const STATUS={pending:'بانتظار المراجعة',accepted:'مقبول',rejected:'يحتاج تعديل'};
+const MAX_MB=2;
+
+/* ---------- icons ---------- */
+const P={
+ home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',
+ user:'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z',
+ users:'M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',
+ link:'M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1 1M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1-1',
+ file:'M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h5',
+ image:'M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2zM8.5 10a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM21 15l-5-5L5 21',
+ play:'M6 4l14 8-14 8z',
+ edit:'M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z',
+ upload:'M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12',
+ check:'M20 6L9 17l-5-5',
+ x:'M18 6L6 18M6 6l12 12',
+ plus:'M12 5v14M5 12h14',
+ chev:'M6 9l6 6 6-6',
+ trash:'M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6',
+ star:'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z',
+ map:'M1 6v16l7-4 8 4 7-4V2l-7 4-8-4zM8 2v16M16 6v16',
+ out:'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9',
+ layers:'M12 2l10 5-10 5L2 7zM2 17l10 5 10-5M2 12l10 5 10-5',
+ inbox:'M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z',
+ book:'M4 19.5A2.5 2.5 0 016.5 17H20V2H6.5A2.5 2.5 0 004 4.5zM4 19.5A2.5 2.5 0 006.5 22H20v-5',
+ award:'M12 15a7 7 0 100-14 7 7 0 000 14zM8.21 13.89L7 23l5-3 5 3-1.21-9.12',
+ msg:'M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z',
+ mail:'M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zM22 6l-10 7L2 6',
+ lock:'M5 11h14a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2v-7a2 2 0 012-2zM7 11V7a5 5 0 0110 0v4',
+ clock:'M12 22a10 10 0 100-20 10 10 0 000 20zM12 6v6l4 2',
+ ext:'M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3',
+ moon:'M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z',
+ grid:'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z',
+ shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+ flag:'M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7'
+};
+const Icon=({n,s=20,fill})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill=${fill?'currentColor':'none'} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d=${P[n]}/></svg>`;
+
+/* ---------- data helpers ---------- */
+const svgArt=(c1,c2,label)=>'data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient></defs><rect width="640" height="400" fill="url(#g)"/><circle cx="510" cy="90" r="130" fill="#fff" fill-opacity=".1"/><circle cx="110" cy="340" r="150" fill="#fff" fill-opacity=".08"/><text x="320" y="215" font-family="Tahoma,Arial,sans-serif" font-size="46" font-weight="700" fill="#fff" text-anchor="middle">'+label+'</text></svg>');
+
+function seed(){
+  const t=Date.now(), D=864e5;
+  const titles=[
+    ['مدخل إلى المادة','نظرة أولى على أهداف المادة وطريقة التعلّم.'],
+    ['المفاهيم الأساسية','المصطلحات والقواعد التي تُبنى عليها بقية الوحدات.'],
+    ['التطبيق العملي','تمارين وأمثلة تطبّقين فيها ما تعلّمتِه.'],
+    ['التحليل والمناقشة','قراءة النصوص والحالات وربطها بالمفاهيم.'],
+    ['المهارات المتقدمة','مستوى أعمق يحتاج تركيزًا وتدريبًا.'],
+    ['المراجعة والتقويم','مراجعة شاملة قبل الاختبار.'],
+    ['ملفات الطالبة','ارفعي ملفاتك هنا لتصل إلى معلمتك للمراجعة.']
+  ];
+  const units=titles.map((x,i)=>({id:'u'+(i+1),n:i+1,title:x[0],desc:x[1],kinds:i===6?['file']:['link','pdf','image','video','homework']}));
+  const items=[
+    {id:'i1',unitId:'u1',kind:'link',title:'شرح تفاعلي للوحدة',url:'https://example.com/unit-1',desc:'رابط خارجي مفتوح للجميع'},
+    {id:'i2',unitId:'u1',kind:'pdf',title:'ملخص الوحدة الأولى',url:'https://example.com/summary.pdf',desc:'ملف PDF'},
+    {id:'i3',unitId:'u1',kind:'image',title:'مخطط الوحدة',dataUrl:svgArt('#d3a24f','#5f9284','مخطط الوحدة'),fileName:'map.svg'},
+    {id:'i4',unitId:'u1',kind:'video',title:'شرح الدرس الأول',url:'https://example.com/video-1',desc:'مقطع مرئي'},
+    {id:'h1',unitId:'u1',kind:'homework',title:'لخّصي الدرس بأسلوبك',desc:'اكتبي ملخصًا من نصف صفحة وأرفقيه.',pts:10},
+    {id:'i5',unitId:'u2',kind:'link',title:'مصدر إضافي للقراءة',url:'https://example.com/read',desc:''},
+    {id:'h2',unitId:'u2',kind:'homework',title:'حلّي التمارين الخمسة',desc:'أرفقي صورة أو ملفًا لحلّك.',pts:15},
+    {id:'i6',unitId:'u3',kind:'pdf',title:'أوراق العمل',url:'https://example.com/worksheets.pdf',desc:''},
+    {id:'h3',unitId:'u3',kind:'homework',title:'مشروع تطبيقي صغير',desc:'اعرضي فكرتك في ملف واحد.',pts:20}
+  ];
+  const users=[
+    {id:'t1',role:'teacher',name:'أ. نورة العتيبي',email:'teacher@demo.com',password:'1234',status:'approved',createdAt:t-30*D},
+    {id:'s1',role:'student',name:'ريم القحطاني',email:'student@demo.com',password:'1234',status:'approved',sectionId:'c1',groupIds:['g1'],createdAt:t-20*D},
+    {id:'s2',role:'student',name:'لجين الحربي',email:'lujain@demo.com',password:'1234',status:'pending',sectionId:null,groupIds:[],createdAt:t-1*D},
+    {id:'s3',role:'student',name:'سارة الدوسري',email:'sara@demo.com',password:'1234',status:'approved',sectionId:'c2',groupIds:['g2'],createdAt:t-15*D},
+    {id:'s4',role:'student',name:'هند المطيري',email:'hind@demo.com',password:'1234',status:'pending',sectionId:null,groupIds:[],createdAt:t-2*3600e3},
+    {id:'s5',role:'student',name:'نوف الشمري',email:'nouf@demo.com',password:'1234',status:'approved',sectionId:'c1',groupIds:['g1','g2'],createdAt:t-12*D}
+  ];
+  const sections=[{id:'c1',name:'الفصل أ'},{id:'c2',name:'الفصل ب'}];
+  /* مجموعات جديدة */
+  const groups=[
+    {id:'g1',name:'فرسان المعرفة',emblem:'⚔️',color:'#d3a24f',desc:'مجموعة المتحديات',createdAt:t-10*D},
+    {id:'g2',name:'شعلة الإبداع',emblem:'🔥',color:'#e8642e',desc:'مجموعة النقاط',createdAt:t-8*D},
+    {id:'g3',name:'نجوم الصباح',emblem:'🌟',color:'#5f9284',desc:'مجموعة الالتزام',createdAt:t-5*D}
+  ];
+  const submissions=[
+    {id:'b1',studentId:'s1',itemId:'h1',unitId:'u1',note:'هذا ملخصي للدرس.',fileName:'summary.txt',dataUrl:'',status:'accepted',comment:'ملخص واضح ومرتب، أحسنتِ!',points:10,createdAt:t-6*D,reviewedAt:t-5*D},
+    {id:'b2',studentId:'s3',itemId:'h1',unitId:'u1',note:'تم الحل، وأرفقت الملف.',fileName:'sara-summary.pdf',dataUrl:'',status:'pending',comment:'',points:0,createdAt:t-3*3600e3},
+    {id:'b3',studentId:'s1',itemId:'h2',unitId:'u2',note:'حللت التمارين، الأخير كان صعبًا.',fileName:'',dataUrl:'',status:'pending',comment:'',points:0,createdAt:t-5*3600e3},
+    {id:'b4',studentId:'s5',itemId:'h1',unitId:'u1',note:'ملخص ممتاز',fileName:'nouf.pdf',dataUrl:'',status:'accepted',comment:'رائع!',points:10,createdAt:t-4*D,reviewedAt:t-3*D},
+    {id:'b5',studentId:'s5',itemId:'h2',unitId:'u2',note:'',fileName:'nouf2.pdf',dataUrl:'',status:'accepted',comment:'ممتاز',points:15,createdAt:t-3*D,reviewedAt:t-2*D},
+    {id:'b6',studentId:'s5',itemId:'h3',unitId:'u3',note:'مشروعي',fileName:'nouf3.pdf',dataUrl:'',status:'accepted',comment:'عمل مميز',points:20,createdAt:t-1*D,reviewedAt:t-1*D},
+    {id:'b7',studentId:'s3',itemId:'h2',unitId:'u2',note:'',fileName:'sara2.pdf',dataUrl:'',status:'accepted',comment:'جيد',points:15,createdAt:t-6*D,reviewedAt:t-5*D}
+  ];
+  const points=[
+    {id:'p1',studentId:'s1',amount:10,reason:'تصحيح: لخّصي الدرس بأسلوبك',at:t-5*D,subId:'b1'},
+    {id:'p2',studentId:'s1',amount:40,reason:'مشاركة مميزة في الحصة',at:t-8*D},
+    {id:'p3',studentId:'s1',amount:20,reason:'التزام بالمواعيد',at:t-12*D},
+    {id:'p4',studentId:'s3',amount:25,reason:'بداية موفقة',at:t-10*D},
+    {id:'p5',studentId:'s5',amount:10,reason:'تصحيح: ملخص الوحدة',at:t-3*D,subId:'b4'},
+    {id:'p6',studentId:'s5',amount:15,reason:'تصحيح: تمارين الوحدة 2',at:t-2*D,subId:'b5'},
+    {id:'p7',studentId:'s5',amount:20,reason:'تصحيح: مشروع الوحدة 3',at:t-1*D,subId:'b6'}
+  ];
+  return {v:2,users,sections,groups,units,items,submissions,points};
+}
+const pointsOf=(db,sid)=>db.points.filter(p=>p.studentId===sid).reduce((a,p)=>a+p.amount,0);
+const levelIdx=pts=>{let k=0;LEVELS.forEach((l,i)=>{if(pts>=l.min)k=i;});return k;};
+const initials=n=>(n||'').replace(/^أ\.\s*/,'').trim().split(' ').slice(0,2).map(w=>w[0]).join('');
+const itemTitle=(db,s)=>{const it=db.items.find(i=>i.id===s.itemId);return it?it.title:'ملف مرفوع (الوحدة السابعة)';};
+
+/* ---------- Streak (الشعلة) ---------- */
+/* Streak = عدد الواجبات المقبولة (كل واجب مقبول = +1)، وتزيد بشكل متتالي */
+const streakOf = (db, studentId) => {
+  return db.submissions.filter(s => s.studentId === studentId && s.status === 'accepted').length;
+};
+/* أعلى سلسلة وصلت لها الطالبة = streak حالياً (لأن الستريك يتراكم) */
+const bestStreak = (db, studentId) => {
+  /* أطول سلسلة: نحسب عدد الواجبات المقبولة بترتيب زمني متتالية */
+  const accepted = db.submissions
+    .filter(s => s.studentId === studentId && s.status === 'accepted')
+    .sort((a,b) => a.createdAt - b.createdAt);
+  if (accepted.length === 0) return 0;
+  let best = 1, cur = 1;
+  for (let i = 1; i < accepted.length; i++) {
+    const diff = (accepted[i].createdAt - accepted[i-1].createdAt) / 864e5;
+    if (diff <= 2) { cur++; best = Math.max(best, cur); }
+    else cur = 1;
+  }
+  return best;
+};
+/* Current streak = عدد الأيام/الواجبات المتتالية الحالية (آخر واجب مقبول خلال آخر 3 أيام) */
+const currentStreak = (db, studentId) => {
+  const acc = db.submissions
+    .filter(s => s.studentId === studentId && s.status === 'accepted')
+    .sort((a,b) => b.createdAt - a.createdAt);
+  if (acc.length === 0) return 0;
+  const now = Date.now();
+  if ((now - acc[0].createdAt) > 3 * 864e5) return 0;
+  let streak = 1;
+  for (let i = 1; i < acc.length; i++) {
+    const diff = (acc[i-1].createdAt - acc[i].createdAt) / 864e5;
+    if (diff <= 2) streak++;
+    else break;
+  }
+  return streak;
+};
+/* streak للمجموعة = متوسط/مجموع streaks أعضائها */
+const groupStreak = (db, groupId) => {
+  const members = db.users.filter(u => u.role==='student' && u.status==='approved' && (u.groupIds||[]).includes(groupId));
+  if (members.length === 0) return { total: 0, avg: 0, count: 0 };
+  const total = members.reduce((sum,u) => sum + currentStreak(db, u.id), 0);
+  return { total, avg: Math.round(total / members.length * 10) / 10, count: members.length };
+};
+
+function readFile(file){
+  return new Promise((res,rej)=>{
+    if(!file) return rej(new Error('none'));
+    if(file.size>MAX_MB*1024*1024) return rej(new Error('big'));
+    const r=new FileReader(); r.onload=()=>res({fileName:file.name,dataUrl:r.result}); r.onerror=()=>rej(new Error('read')); r.readAsDataURL(file);
+  });
+}
+function blobUrl(d){
+  try{ const [h,b]=d.split(','); const m=(h.match(/:(.*?)[;,]/)||[])[1]||'application/octet-stream';
+    if(h.indexOf('base64')<0) return d;
+    const bin=atob(b), a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);
+    return URL.createObjectURL(new Blob([a],{type:m})); }catch(e){ return d; }
+}
+
+/* ---------- Fire Badge ---------- */
+function FireBadge({n, size=14}) {
+  const lvl = streakLevel(n);
+  if (lvl === 0) return html`<span className="fire lvl-0" title="لا شعلة بعد">·</span>`;
+  const info = STREAK_LEVELS[lvl];
+  return html`<span className=${'fire lvl-'+lvl} title=${info.name}>
+    <span style=${{fontSize: size}}>${info.icon}</span>
+    <span>${n}</span>
+  </span>`;
+}
+
+/* ---------- small UI ---------- */
+function Modal({title,onClose,children,wide}){
+  useEffect(()=>{const f=e=>{if(e.key==='Escape')onClose();};window.addEventListener('keydown',f);return()=>window.removeEventListener('keydown',f);},[]);
+  return html`<div className="veil" onMouseDown=${e=>{if(e.target===e.currentTarget)onClose();}}>
+    <div className=${cx('modal',wide&&'wide')} role="dialog" aria-modal="true" aria-label=${title}>
+      <h3><span>${title}</span><button className="iconbtn" onClick=${onClose} aria-label="إغلاق"><${Icon} n="x" s=${16}/></button></h3>
+      ${children}
+    </div></div>`;
+}
+const Empty=({title,text})=>html`<div className="empty"><b>${title}</b>${text}</div>`;
+function StatusBadge({s}){return html`<span className=${'badge '+s}>${s==='accepted'?html`<${Icon} n="check" s=${12}/>`:s==='pending'?html`<${Icon} n="clock" s=${12}/>`:html`<${Icon} n="x" s=${12}/>`} ${STATUS[s]}</span>`;}
+function FilePick({onPick,label='اختاري ملفًا',accept,value}){
+  const {toast}=useApp();
+  const change=async e=>{const f=e.target.files[0]; if(!f)return; try{ onPick(await readFile(f)); }catch(er){ toast(er.message==='big'?'حجم الملف أكبر من '+MAX_MB+' ميجابايت':'تعذّرت قراءة الملف','bad'); } e.target.value=''; };
+  return html`<label className="filebox"><span className="ficon"><${Icon} n="upload" s=${18}/></span>
+    <span><b>${value?value:label}</b><span>${value?'اضغطي لاستبدال الملف':'الحد الأقصى '+MAX_MB+' ميجابايت'}</span></span>
+    <input type="file" accept=${accept} onChange=${change}/></label>`;
+}
+function JourneyMap({nodes,current=-1,animate=false,onDark=false,gid='jmg'}){
+  const step=104,top=46,H=top*2+(nodes.length-1)*step-30;
+  const pts=nodes.map((n,i)=>({x:i%2===0?250:70,y:top+i*step}));
+  let d='M'+pts[0].x+' '+pts[0].y;
+  for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i];d+=' C'+a.x+' '+(a.y+step*.55)+','+b.x+' '+(b.y-step*.55)+','+b.x+' '+b.y;}
+  const frac=Math.max(0,Math.min(1,current/(nodes.length-1)));
+  const fillStyle=animate?{}:{strokeDasharray:frac+' 1'};
+  return html`<svg className=${cx('jm',onDark&&'dark',animate&&'anim')} viewBox=${'0 0 320 '+H} role="img" aria-label="خريطة الرحلة">
+    <defs><linearGradient id=${gid} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2=${H}><stop offset="0" stop-color="#d3a24f"/><stop offset="1" stop-color="#5f9284"/></linearGradient></defs>
+    <path d=${d} className="jm-track" pathLength="1"/>
+    <path d=${d} className="jm-fill" pathLength="1" stroke=${'url(#'+gid+')'} style=${fillStyle}/>
+    ${nodes.map((n,i)=>{
+      const p=pts[i], st=animate?'done':(i<current?'done':i===current?'now':'todo'), left=p.x<160;
+      return html`<g key=${i} className=${'jm-node '+st} style=${{'--i':i,'--c':n.color||'#d3a24f'}}>
+        ${st==='now'&&html`<circle className="jm-ring" cx=${p.x} cy=${p.y} r="28"/>`}
+        <circle className="jm-dot" cx=${p.x} cy=${p.y} r="20"/>
+        <text className="jm-num" x=${p.x} y=${p.y}>${n.num!=null?n.num:(i<current?'✓':i+1)}</text>
+        <text className="jm-label" x=${left?p.x+34:p.x-34} y=${p.y-3} textAnchor=${left?'start':'end'}>${n.label}</text>
+        <text className="jm-sub" x=${left?p.x+34:p.x-34} y=${p.y+15} textAnchor=${left?'start':'end'}>${n.sub||''}</text>
+      </g>`;})}
+  </svg>`;
+}
+
+/* ---------- Auth ---------- */
+function Auth(){
+  const app=useApp();
+  const [role,setRole]=useState('student');
+  const [mode,setMode]=useState('login');
+  const [f,setF]=useState({name:'',email:'',password:'',confirm:''});
+  const [err,setErr]=useState('');
+  const [notice,setNotice]=useState(null);
+  const set=k=>e=>setF({...f,[k]:e.target.value});
+  const submit=()=>{
+    setErr(''); setNotice(null);
+    if(mode==='login'){
+      const r=app.login(role,f.email,f.password);
+      if(r.error) setErr(r.error);
+      else if(r.status) setNotice(r.status);
+    }else{
+      if(f.name.trim().length<3) return setErr('اكتبي اسمك الكامل (ثلاثة أحرف على الأقل).');
+      if(!/^\S+@\S+\.\S+$/.test(f.email)) return setErr('اكتبي بريدًا إلكترونيًا صحيحًا.');
+      if(f.password.length<4) return setErr('كلمة المرور يجب ألا تقل عن 4 أحرف.');
+      if(f.password!==f.confirm) return setErr('كلمتا المرور غير متطابقتين.');
+      const r=app.register(f);
+      if(r.error) return setErr(r.error);
+      setNotice('sent'); setMode('login'); setF({...f,password:'',confirm:''});
+    }
+  };
+  const key=e=>{ if(e.key==='Enter'&&e.target.tagName==='INPUT') submit(); };
+  const demo=r=>{ const c=r==='teacher'?['teacher@demo.com']:['student@demo.com']; app.login(r,c[0],'1234'); };
+  const nodes=useMemo(()=>[['مدخل إلى المادة'],['المفاهيم الأساسية'],['التطبيق العملي'],['التحليل والمناقشة'],['المهارات المتقدمة'],['المراجعة والتقويم'],['ملفاتك الخاصة']].map((x,i)=>({label:x[0],sub:'الوحدة '+(i+1),color:UNIT_COLORS[i],num:i+1})),[]);
+  return html`<div className="auth">
+    <section className="auth-form" onKeyDown=${key}>
+      <div className="brand"><span className="logo"><${Icon} n="map" s=${22}/></span><div><b>مسار</b><small>منصة التعلّم خطوة بخطوة</small></div></div>
+      <h1>${mode==='login'?'أهلًا بعودتك':'ابدئي رحلتك معنا'}</h1>
+      <p className="lead">${mode==='login'?'سجّلي الدخول لتكملي من حيث توقفتِ.':'أنشئي حسابك وسنراجع طلبك ونضيفك إلى فصلك.'}</p>
+      <div className="seg" role="tablist">
+        <button className=${role==='student'?'on':''} onClick=${()=>{setRole('student');setErr('');setNotice(null);}}>طالبة</button>
+        <button className=${role==='teacher'?'on':''} onClick=${()=>{setRole('teacher');setMode('login');setErr('');setNotice(null);}}>معلمة</button>
+      </div>
+      ${role==='student'&&html`<div className="seg" role="tablist">
+        <button className=${mode==='login'?'on':''} onClick=${()=>{setMode('login');setErr('');}}>تسجيل الدخول</button>
+        <button className=${mode==='register'?'on':''} onClick=${()=>{setMode('register');setErr('');setNotice(null);}}>حساب جديد</button>
+      </div>`}
+      ${notice==='sent'&&html`<div className="note good"><${Icon} n="check" s=${18}/><span>وصل طلبك. ستتمكنين من الدخول بعد أن توافق المعلمة عليه.</span></div>`}
+      ${notice==='pending'&&html`<div className="note"><${Icon} n="clock" s=${18}/><span>طلبك ما زال قيد المراجعة. سيفتح الدخول فور موافقة المعلمة.</span></div>`}
+      ${notice==='rejected'&&html`<div className="note bad"><${Icon} n="x" s=${18}/><span>لم يتم قبول طلب التسجيل. تواصلي مع معلمتك إن كان ذلك بالخطأ.</span></div>`}
+      ${err&&html`<div className="err" role="alert">${err}</div>`}
+      ${mode==='register'&&html`<div className="field"><label htmlFor="nm">الاسم الكامل</label><div className="inp"><${Icon} n="user" s=${16}/><input id="nm" className="input" value=${f.name} onChange=${set('name')} placeholder="مثال: ريم القحطاني" autoComplete="name"/></div></div>`}
+      <div className="field"><label htmlFor="em">البريد الإلكتروني</label><div className="inp"><${Icon} n="mail" s=${16}/><input id="em" className="input" dir="ltr" style=${{textAlign:'right'}} type="email" value=${f.email} onChange=${set('email')} placeholder="name@email.com" autoComplete="email"/></div></div>
+      <div className="field"><label htmlFor="pw">كلمة المرور</label><div className="inp"><${Icon} n="lock" s=${16}/><input id="pw" className="input" dir="ltr" style=${{textAlign:'right'}} type="password" value=${f.password} onChange=${set('password')} placeholder="••••••" autoComplete=${mode==='login'?'current-password':'new-password'}/></div></div>
+      ${mode==='register'&&html`<div className="field"><label htmlFor="cf">تأكيد كلمة المرور</label><div className="inp"><${Icon} n="lock" s=${16}/><input id="cf" className="input" dir="ltr" style=${{textAlign:'right'}} type="password" value=${f.confirm} onChange=${set('confirm')} placeholder="••••••" autoComplete="new-password"/></div></div>`}
+      <button className="btn block" onClick=${submit}>${mode==='login'?'تسجيل الدخول':'إرسال طلب التسجيل'}</button>
+      <div className="demo">
+        <p>لتجربة المنصة الآن بحسابات جاهزة:</p>
+        <div className="row" style=${{border:0,padding:0,background:'none'}}>
+          <button className="btn soft sm" onClick=${()=>demo('student')}><${Icon} n="user" s=${14}/> دخول كطالبة</button>
+          <button className="btn soft sm" onClick=${()=>demo('teacher')}><${Icon} n="shield" s=${14}/> دخول كمعلمة</button>
+        </div>
+      </div>
+    </section>
+    <aside className="auth-art" aria-hidden="true"><div className="inner">
+      <h2>سبع وحدات، ورحلة واحدة</h2>
+      <p>كل وحدة تفتح لك شيئًا جديدًا: روابط وملفات وواجبات، ونقاط تتراكم حتى تصلين إلى القمة.</p>
+      <${JourneyMap} nodes=${nodes} animate=${true} onDark=${true} gid="jm-auth"/>
+    </div></aside>
+  </div>`;
+}
+
+/* ---------- Shell ---------- */
+function Shell({nav,page,setPage,children}){
+  const {me,logout,theme,toggleTheme}=useApp();
+  return html`<div className="app">
+    <aside className="side">
+      <div className="brand"><span className="logo"><${Icon} n="map" s=${22}/></span><div><b>مسار</b><small>${me.role==='teacher'?'لوحة المعلمة':'مساحة الطالبة'}</small></div></div>
+      <nav className="nav" aria-label="التنقل">
+        ${nav.map(x=>html`<button key=${x.id} className=${page===x.id?'on':''} onClick=${()=>setPage(x.id)} aria-current=${page===x.id?'page':undefined}>
+          <${Icon} n=${x.icon} s=${18}/><span>${x.label}</span>${x.count>0&&html`<span className=${'count'+(x.fire?' fire-count':'')}>${x.count}</span>`}</button>`)}
+      </nav>
+      <div className="me"><span className="av">${initials(me.name)}</span><div><b>${me.name}</b><small>${me.role==='teacher'?'معلمة':'طالبة'}</small></div>
+        <div className="tools"><button className="iconbtn" onClick=${toggleTheme} aria-label="تبديل المظهر"><${Icon} n="moon" s=${14}/></button><button className="iconbtn" onClick=${logout} aria-label="تسجيل الخروج"><${Icon} n="out" s=${14}/></button></div></div>
+    </aside>
+    <main className="main">
+      <div className="mobile-bar"><div className="brand" style=${{margin:0}}><span className="logo" style=${{width:36,height:36}}><${Icon} n="map" s=${18}/></span><b>مسار</b></div>
+        <div style=${{display:'flex',gap:6}}><button className="iconbtn" onClick=${toggleTheme} aria-label="تبديل المظهر"><${Icon} n="moon" s=${15}/></button><button className="iconbtn" onClick=${logout} aria-label="تسجيل الخروج"><${Icon} n="out" s=${15}/></button></div></div>
+      ${children}
+    </main></div>`;
+}
+const Head=({title,sub,children})=>html`<div className="head"><div><h1>${title}</h1>${sub&&html`<p>${sub}</p>`}</div><div>${children}</div></div>`;
+
+/* ---------- Student: submit modal ---------- */
+function SubmitModal({unit,item,existing,onClose}){
+  const {me,submit,toast}=useApp();
+  const [note,setNote]=useState(existing?existing.note:'');
+  const [file,setFile]=useState(existing?{fileName:existing.fileName,dataUrl:existing.dataUrl}:{fileName:'',dataUrl:''});
+  const send=()=>{
+    if(!file.dataUrl&&!note.trim()) return toast('أرفقي ملفًا أو اكتبي ملاحظة قبل الإرسال','bad');
+    submit({studentId:me.id,itemId:item?item.id:'u7',unitId:unit.id,note:note.trim(),fileName:file.fileName,dataUrl:file.dataUrl,replace:existing?existing.id:null});
+    toast(existing?'أُعيد إرسال التسليم':'وصل تسليمك إلى المعلمة'); onClose();
+  };
+  return html`<${Modal} title=${item?item.title:'إضافة ملف جديد'} onClose=${onClose}>
+    ${item&&item.desc&&html`<p style=${{color:'var(--muted)',marginBottom:14,fontSize:14}}>${item.desc}</p>`}
+    ${existing&&existing.status==='rejected'&&html`<div className="note bad"><${Icon} n="msg" s=${18}/><span>ملاحظة المعلمة: ${existing.comment||'يرجى المراجعة والتعديل.'}</span></div>`}
+    <div className="field"><label>الملف</label><${FilePick} value=${file.fileName} onPick=${setFile}/></div>
+    <div className="field"><label htmlFor="sn">ملاحظة للمعلمة (اختياري)</label><textarea id="sn" className="textarea" value=${note} onChange=${e=>setNote(e.target.value)} placeholder="اكتبي ما تودين إيصاله"/></div>
+    <div className="foot"><button className="btn" onClick=${send}><${Icon} n="upload" s=${16}/> ${existing?'إعادة الإرسال':'إرسال'}</button><button className="btn ghost" onClick=${onClose}>إلغاء</button></div>
+  <//>`;
+}
+
+/* ---------- Student: home with units ---------- */
+function ItemRow({it}){
+  const {openViewer}=useApp();
+  const k=KINDS[it.kind];
+  const hasFile=!!it.dataUrl;
+  return html`<div className="item">
+    ${it.kind==='image'&&hasFile?html`<button className="thumb" onClick=${()=>openViewer(it)} aria-label=${'عرض '+it.title}><img src=${it.dataUrl} alt=""/></button>`:html`<span className="ficon"><${Icon} n=${k.icon} s=${16}/></span>`}
+    <div className="it"><b>${it.title}</b>${it.desc&&html`<span>${it.desc}</span>`}</div>
+    ${it.url?html`<a className="btn soft sm" href=${it.url} target="_blank" rel="noopener noreferrer">فتح <${Icon} n="ext" s=${13}/></a>`:html`<button className="btn soft sm" onClick=${()=>openViewer(it)}>عرض</button>`}
+  </div>`;
+}
+function HomeworkRow({hw,unit,mine}){
+  const [open,setOpen]=useState(false);
+  const s=mine.find(x=>x.itemId===hw.id);
+  return html`<div className="hw">
+    <div className="top"><div><b>${hw.title}</b><div style=${{fontSize:13,color:'var(--muted)',marginTop:3}}>${hw.desc}</div></div>
+      <div style=${{display:'flex',gap:8,alignItems:'center'}}><span className="badge plain"><${Icon} n="star" s=${11} fill=${true}/> ${hw.pts} نقطة</span>${s&&html`<${StatusBadge} s=${s.status}/>`}</div></div>
+    ${s&&s.comment&&html`<div className="cmt"><b>تعليق المعلمة: </b>${s.comment}</div>`}
+    ${(!s||s.status==='rejected')&&html`<div><button className="btn sm" onClick=${()=>setOpen(true)}><${Icon} n="upload" s=${14}/> ${s?'تعديل وإعادة الإرسال':'تسليم الحل'}</button></div>`}
+    ${s&&s.status==='pending'&&html`<div style=${{fontSize:13,color:'var(--muted)'}}>تم الإرسال في ${fmtDate(s.createdAt)}، بانتظار تصحيح المعلمة.</div>`}
+    ${open&&html`<${SubmitModal} unit=${unit} item=${hw} existing=${s} onClose=${()=>setOpen(false)}/>`}
+  </div>`;
+}
+function UnitCard({unit,me,defaultOpen}){
+  const {db}=useApp();
+  const [open,setOpen]=useState(!!defaultOpen);
+  const [cat,setCat]=useState(null);
+  const [up,setUp]=useState(false);
+  const items=db.items.filter(i=>i.unitId===unit.id);
+  const mine=db.submissions.filter(s=>s.studentId===me.id);
+  const hws=items.filter(i=>i.kind==='homework');
+  const done=hws.filter(h=>mine.some(s=>s.itemId===h.id&&s.status==='accepted')).length;
+  const my7=mine.filter(s=>s.unitId==='u7');
+  const pct=hws.length?Math.round(done/hws.length*100):0;
+  const color=UNIT_COLORS[unit.n-1];
+  return html`<article className=${cx('unit',open&&'open')} style=${{'--u':color}}>
+    <button className="unit-head" onClick=${()=>setOpen(!open)} aria-expanded=${open}>
+      <span className="unit-num">${unit.n}</span>
+      <span style=${{flex:1,minWidth:0}}><h3>${unit.title}</h3><p>${unit.desc}</p>
+        ${unit.n<7&&hws.length>0&&html`<div className="prog" aria-label=${'إنجاز '+pct+'%'}><i style=${{width:pct+'%'}}></i></div>`}</span>
+      <span className="chev"><${Icon} n="chev"/></span>
+    </button>
+    <div className=${cx('collapse',open&&'open')}><div><div className="unit-body">
+      ${unit.kinds.map(k=>{
+        const list=k==='file'?my7:items.filter(i=>i.kind===k);
+        const isOpen=cat===k;
+        return html`<div key=${k} className=${cx('cat',isOpen&&'open')}>
+          <button className="cat-head" onClick=${()=>setCat(isOpen?null:k)} aria-expanded=${isOpen}>
+            <span className="ci"><${Icon} n=${KINDS[k].icon} s=${16}/></span><span>${KINDS[k].label}</span><span className="n">${list.length}</span><span className="chev"><${Icon} n="chev" s=${16}/></span></button>
+          <div className=${cx('collapse',isOpen&&'open')}><div><div className="cat-list">
+            ${k==='file'&&html`<div><button className="btn sm" onClick=${()=>setUp(true)}><${Icon} n="plus" s=${14}/> إضافة ملف</button></div>`}
+            ${list.length===0&&html`<${Empty} title=${KINDS[k].empty} text=${k==='file'?'الملفات التي ترفعينها تصل إلى معلمتك للمراجعة.':'ستظهر هنا عندما تضيفها المعلمة.'}/>`}
+            ${k==='homework'?list.map(h=>html`<${HomeworkRow} key=${h.id} hw=${h} unit=${unit} mine=${mine}/>`)
+             :k==='file'?list.map(s=>html`<div key=${s.id} className="hw"><div className="top"><div><b>${s.fileName||'ملاحظة نصية'}</b><div style=${{fontSize:13,color:'var(--muted)'}}>أُرسل في ${fmtDate(s.createdAt)}${s.note?' • '+s.note:''}</div></div><${StatusBadge} s=${s.status}/></div>${s.comment&&html`<div className="cmt"><b>تعليق المعلمة: </b>${s.comment}</div>`}</div>`)
+             :list.map(it=>html`<${ItemRow} key=${it.id} it=${it}/>`)}
+          </div></div></div>
+        </div>`;})}
+    </div></div></div>
+    ${up&&html`<${SubmitModal} unit=${unit} item=${null} existing=${null} onClose=${()=>setUp(false)}/>`}
+  </article>`;
+}
+function StudentHome(){
+  const {db,me}=useApp();
+  const pts=pointsOf(db,me.id), li=levelIdx(pts), next=LEVELS[li+1];
+  const pct=next?Math.round((pts-LEVELS[li].min)/(next.min-LEVELS[li].min)*100):100;
+  const section=db.sections.find(s=>s.id===me.sectionId);
+  const streak=currentStreak(db,me.id);
+  return html`<div>
+    <div className="card hero">
+      <div><h1>أهلًا ${me.name.split(' ')[0]}</h1><p>${section?section.name+' • ':''}مستواك الآن: ${LEVELS[li].name}</p>
+        <div className="bar" role="progressbar" aria-valuenow=${pct} aria-valuemin="0" aria-valuemax="100"><i style=${{width:pct+'%'}}></i></div>
+        <small>${next?'باقي '+(next.min-pts)+' نقطة لتصلي إلى مستوى '+next.name:'وصلتِ إلى أعلى مستوى، أحسنتِ!'}</small></div>
+      <div className="big"><b>${pts}</b></div>
+    </div>
+    <${Head} title="وحدات المادة" sub="افتحي أي وحدة لتري محتواها وواجباتها.">${streak>0&&html`<${FireBadge} n=${streak} size=${18}/>`}<//>
+    <div className="units">${db.units.map((u,i)=>html`<${UnitCard} key=${u.id} unit=${u} me=${me} defaultOpen=${i===0}/>`)}</div>
+  </div>`;
+}
+
+/* ---------- Student: assignments ---------- */
+function StudentWork(){
+  const {db,me}=useApp();
+  const [f,setF]=useState('all');
+  const mine=db.submissions.filter(s=>s.studentId===me.id).sort((a,b)=>b.createdAt-a.createdAt);
+  const list=f==='all'?mine:mine.filter(s=>s.status===f);
+  const cnt=s=>mine.filter(x=>x.status===s).length;
+  return html`<div>
+    <${Head} title="تسليماتي" sub="كل ما أرسلتِه وحالته وتعليقات معلمتك."/>
+    <div className="tabs">${[['all','الكل ('+mine.length+')'],['pending','بانتظار المراجعة ('+cnt('pending')+')'],['accepted','المقبولة ('+cnt('accepted')+')'],['rejected','تحتاج تعديل ('+cnt('rejected')+')']].map(x=>html`<button key=${x[0]} className=${cx('tab',f===x[0]&&'on')} onClick=${()=>setF(x[0])}>${x[1]}</button>`)}</div>
+    <div className="list">
+      ${list.length===0&&html`<${Empty} title="لا توجد تسليمات هنا" text="افتحي إحدى الوحدات وسلّمي أول واجب."/>`}
+      ${list.map(s=>{const u=db.units.find(x=>x.id===s.unitId);return html`<div key=${s.id} className="card subcard">
+        <div className="meta"><div><b>${itemTitle(db,s)}</b><div style=${{fontSize:13,color:'var(--muted)'}}>الوحدة ${u?u.n:''} • ${fmtDate(s.createdAt)}${s.fileName?' • '+s.fileName:''}</div></div><${StatusBadge} s=${s.status}/></div>
+        ${s.comment&&html`<div className="txt"><b>تعليق المعلمة: </b>${s.comment}</div>`}
+        ${s.status==='accepted'&&s.points>0&&html`<div><span className="pts"><${Icon} n="star" s=${13} fill=${true}/> +${s.points} نقطة</span></div>`}
+      </div>`;})}
+    </div></div>`;
+}
+
+/* ---------- Student: groups (المجموعات) ---------- */
+function StudentGroups(){
+  const {db,me}=useApp();
+  const myGroups=(me.groupIds||[]).map(gid=>db.groups.find(g=>g.id===gid)).filter(Boolean);
+  const myStreak=currentStreak(db,me.id);
+  const myBest=bestStreak(db,me.id);
+  const si=streakInfo(myStreak);
+  const pathNodes=STREAK_LEVELS.map((l,i)=>({label:l.name,sub:l.min+' واجب',icon:l.icon,num:i}));
+  return html`<div>
+    <${Head} title="المجموعات" sub="انضمي إلى مجموعتك، وارفعي شعلك بكل واجب مُقبل."/>
+
+    <div className="streak-hero">
+      <div className="streak-flame-big">${si.icon}</div>
+      <div>
+        <h2>شعلتك الآن: ${si.name}</h2>
+        <p>سلّمي واجباتك باستمرار لتزيد شعلتك 🔥 — كل واجب مُقبل يرفع مستواك!</p>
+        <p style=${{marginTop:8, fontSize:13, color:'var(--muted)'}}>
+          أفضل سلسلة لك: <strong style=${{color:'#f4a340'}}>${myBest}</strong> واجب متتالي
+        </p>
+      </div>
+      <div className="stat-big">
+        <b>${myStreak}</b>
+        <small>ستريك حالياً</small>
+      </div>
+    </div>
+
+    <h3 style=${{fontFamily:'var(--display)', fontSize:22, color:'var(--paper)', marginBottom:14}}>🛤️ مسار الشعلة</h3>
+    <div className="streak-path">
+      ${pathNodes.map((n,i)=>html`<div key=${i} className=${cx('streak-node', myStreak>=STREAK_LEVELS[i].min && i>0 ? 'reached':'')}>
+        <div className="ic">${n.icon}</div>
+        <b>${n.label}</b>
+        <small>${n.sub}</small>
+      </div>`)}
+    </div>
+
+    <h3 style=${{fontFamily:'var(--display)', fontSize:22, color:'var(--paper)', marginBottom:14, marginTop:32}}>👥 مجموعاتي</h3>
+    ${myGroups.length===0 ? html`<${Empty} title="لم تنضمي لأي مجموعة بعد" text="ستضيفك المعلمة إلى مجموعتك قريباً."/>` : html`
+      <div style=${{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(300px, 1fr))', gap:18}}>
+        ${myGroups.map(g=>{
+          const gs=groupStreak(db,g.id);
+          const members=db.users.filter(u=>u.role==='student'&&u.status==='approved'&&(u.groupIds||[]).includes(g.id));
+          return html`<div key=${g.id} className="card group-card" style=${{'--gc':g.color}}>
+            <div className="group-header">
+              <div className="group-emblem">${g.emblem}</div>
+              <div style=${{flex:1}}>
+                <h3>${g.name}</h3>
+                <p>${g.desc||'مجموعة'} • ${members.length} أعضاء</p>
+              </div>
+            </div>
+            <div style=${{display:'flex', gap:8, flexWrap:'wrap'}}>
+              <span className="group-streak-total">🔥 ${gs.total} ستريك المجموعة</span>
+              <span className="badge plain">متوسط: ${gs.avg}</span>
+            </div>
+            <div className="group-members">
+              ${members.map(m=>{
+                const st=currentStreak(db,m.id);
+                return html`<div key=${m.id} className="member-row">
+                  <span className="av">${initials(m.name)}</span>
+                  <div className="info"><b>${m.name}${m.id===me.id?' (أنتِ)':''}</b><span>${LEVELS[levelIdx(pointsOf(db,m.id))].name}</span></div>
+                  <${FireBadge} n=${st}/>
+                </div>`;
+              })}
+            </div>
+          </div>`;
+        })}
+      </div>
+    `}
+  </div>`;
+}
+
+/* ---------- Student: learning journey ---------- */
+function StudentJourney(){
+  const {db,me}=useApp();
+  const pts=pointsOf(db,me.id), li=levelIdx(pts), next=LEVELS[li+1];
+  const mine=db.submissions.filter(s=>s.studentId===me.id);
+  const acc=mine.filter(s=>s.status==='accepted').length;
+  const units=new Set(mine.map(s=>s.unitId)).size;
+  const log=db.points.filter(p=>p.studentId===me.id).sort((a,b)=>b.at-a.at);
+  const nodes=LEVELS.map((l,i)=>({label:l.name,sub:l.min+' نقطة'}));
+  const streak=currentStreak(db,me.id);
+  const best=bestStreak(db,me.id);
+  const badges=[
+    {n:'الخطوة الأولى',d:'أول تسليم',ok:mine.length>=1,i:'map'},
+    {n:'مجتهدة',d:'3 واجبات مقبولة',ok:acc>=3,i:'check'},
+    {n:'مستكشفة الوحدات',d:'تسليم في وحدتين',ok:units>=2,i:'layers'},
+    {n:'مئة نقطة',d:'جمعتِ 100 نقطة',ok:pts>=100,i:'star'},
+    {n:'شعلة صغيرة 🔥',d:'3 واجبات متتالية',ok:best>=3,i:'flag'},
+    {n:'نجمة مسار',d:'وصلتِ إلى القمة',ok:pts>=400,i:'award'}
+  ];
+  return html`<div>
+    <${Head} title="رحلتي" sub="نقاطك ومستواك وكل ما حصلتِ عليه."><span className="pts"><${Icon} n="star" s=${14} fill=${true}/> ${pts} نقطة</span><//>
+    <div className="jgrid">
+      <div className="card panel"><h3>خريطة المستويات</h3>
+        <${JourneyMap} nodes=${nodes} current=${li} gid="jm-me"/>
+        <p style=${{textAlign:'center',color:'var(--muted)',marginTop:10,fontSize:13.5}}>${next?'باقي '+(next.min-pts)+' نقطة على مستوى '+next.name:'أنتِ في القمة!'}</p></div>
+      <div style=${{display:'flex',flexDirection:'column',gap:18}}>
+        <div className="card panel"><h3>شعلتك 🔥</h3>
+          <div style=${{display:'flex', alignItems:'center', gap:16, padding:'10px 0'}}>
+            <div style=${{fontSize:52}}>${streakInfo(streak).icon}</div>
+            <div>
+              <div style=${{fontFamily:'var(--display)', fontSize:22, color:'var(--paper)'}}>${streakInfo(streak).name}</div>
+              <div style=${{color:'var(--muted)', fontSize:13.5}}>ستريك حالي: ${streak} • أفضل: ${best}</div>
+            </div>
+          </div>
+        </div>
+        <div className="card panel"><h3>الأوسمة</h3><div className="badges">${badges.map(b=>html`<div key=${b.n} className=${cx('bdg',!b.ok&&'off')}><span className="bi"><${Icon} n=${b.i} s=${22}/></span><b>${b.n}</b><small>${b.d}</small></div>`)}</div></div>
+        <div className="card panel"><h3>سجل النقاط</h3>
+          ${log.length===0?html`<${Empty} title="لا نقاط بعد" text="ستظهر هنا كل نقطة تمنحك إياها معلمتك."/>`:html`<div className="log">${log.map(p=>html`<div key=${p.id} className="l"><span className=${'amt '+(p.amount>=0?'plus':'minus')}>${p.amount>0?'+':''}${p.amount}</span><div style=${{flex:1}}><b style=${{fontWeight:500,color:'var(--paper)'}}>${p.reason}</b><div style=${{fontSize:12.5,color:'var(--muted)'}}>${fmtDate(p.at)}</div></div></div>`)}</div>`}
+        </div>
+      </div>
+    </div></div>`;
+}
+
+/* ---------- Teacher: dashboard ---------- */
+function TDash({go}){
+  const {db,approve,reject,toast}=useApp();
+  const students=db.users.filter(u=>u.role==='student');
+  const pend=students.filter(u=>u.status==='pending');
+  const subs=db.submissions.filter(s=>s.status==='pending');
+  const total=db.points.reduce((a,p)=>a+Math.max(0,p.amount),0);
+  const totalStreak=students.filter(u=>u.status==='approved').reduce((s,u)=>s+currentStreak(db,u.id),0);
+  const S=[['الطلبات الجديدة',pend.length,'inbox','#d3a24f','requests'],['الطالبات المقبولات',students.filter(u=>u.status==='approved').length,'users','#5f9284','students'],['بانتظار التصحيح',subs.length,'edit','#c9845c','grading'],['إجمالي الشعلات',totalStreak,'flag','#e8642e','groups']];
+  return html`<div>
+    <${Head} title="نظرة عامة" sub="ما يحتاج انتباهك اليوم."/>
+    <div className="stats">${S.map(s=>html`<button key=${s[0]} className="card stat" style=${{'--c':s[3],textAlign:'start',cursor:'pointer',color:'inherit'}} onClick=${()=>go(s[4])}><span className="si"><${Icon} n=${s[2]} s=${22}/></span><div><b>${s[1]}</b><span>${s[0]}</span></div></button>`)}</div>
+    <div className="cols">
+      <div className="card panel"><h3>طلبات التسجيل <button className="btn ghost sm" onClick=${()=>go('requests')}>عرض الكل</button></h3>
+        ${pend.length===0?html`<${Empty} title="لا طلبات جديدة" text="ستظهر هنا طلبات الطالبات فور وصولها."/>`:html`<div className="list">${pend.map(u=>html`<div key=${u.id} className="row"><span className="av">${initials(u.name)}</span><div className="grow"><b>${u.name}</b><span>${fmtDate(u.createdAt)}</span></div><div className="acts"><button className="btn ok sm" onClick=${()=>{approve(u.id,db.sections[0]?db.sections[0].id:null);toast('تم قبول '+u.name);}}>قبول</button><button className="btn ghost sm" onClick=${()=>{reject(u.id);toast('تم رفض الطلب');}}>رفض</button></div></div>`)}</div>`}</div>
+      <div className="card panel"><h3>تسليمات بانتظار التصحيح <button className="btn ghost sm" onClick=${()=>go('grading')}>افتحي التصحيح</button></h3>
+        ${subs.length===0?html`<${Empty} title="كل شيء مُصحَّح" text="لا توجد تسليمات معلّقة."/>`:html`<div className="list">${subs.slice(0,4).map(s=>{const st=db.users.find(u=>u.id===s.studentId);return html`<div key=${s.id} className="row"><div className="grow"><b>${st?st.name:''}</b><span>${itemTitle(db,s)} • ${fmtDate(s.createdAt)}</span></div><${StatusBadge} s="pending"/></div>`;})}</div>`}</div>
+    </div></div>`;
+}
+
+/* ---------- Teacher: groups management (NEW) ---------- */
+function TGroupModal({group,onClose}){
+  const {db,addGroup,updateGroup,toast}=useApp();
+  const [f,setF]=useState(group || {name:'',emblem:'⚔️',color:'#d3a24f',desc:''});
+  const save=()=>{
+    if(!f.name.trim()) return toast('اكتبي اسم المجموعة','bad');
+    if(group) { updateGroup(group.id,f); toast('تم تحديث المجموعة'); }
+    else { addGroup(f); toast('تمت إضافة المجموعة'); }
+    onClose();
+  };
+  return html`<${Modal} title=${group?'تعديل المجموعة':'مجموعة جديدة'} onClose=${onClose}>
+    <div className="field"><label>اسم المجموعة</label><input className="input" value=${f.name} onChange=${e=>setF({...f,name:e.target.value})} placeholder="مثال: فرسان المعرفة"/></div>
+    <div className="field"><label>الشعار</label>
+      <div className="chips">${GROUP_EMBLEMS.map(e=>html`<button key=${e} className=${cx('chip',f.emblem===e&&'on')} onClick=${()=>setF({...f,emblem:e})} style=${{fontSize:18,padding:'6px 12px'}}>${e}</button>`)}</div>
+    </div>
+    <div className="field"><label>اللون</label>
+      <div className="chips">${GROUP_COLORS.map(c=>html`<button key=${c} className=${cx('chip',f.color===c&&'on')} onClick=${()=>setF({...f,color:c})} style=${{background:f.color===c?c:'transparent', borderColor:c, width:36, height:36, padding:0}}></button>`)}</div>
+    </div>
+    <div className="field"><label>وصف مختصر</label><input className="input" value=${f.desc||''} onChange=${e=>setF({...f,desc:e.target.value})} placeholder="مثال: مجموعة النقاط"/></div>
+    <div className="foot"><button className="btn" onClick=${save}><${Icon} n="check" s=${16}/> ${group?'حفظ':'إضافة'}</button><button className="btn ghost" onClick=${onClose}>إلغاء</button></div>
+  <//>`;
+}
+function TAssignModal({group,onClose}){
+  const {db,toggleGroupMember,toast}=useApp();
+  const students=db.users.filter(u=>u.role==='student'&&u.status==='approved');
+  return html`<${Modal} title=${'إدارة أعضاء: '+group.name} onClose=${onClose}>
+    <p style=${{color:'var(--muted)', fontSize:13.5, marginBottom:14}}>اختاري الطالبات اللواتي تريدين إضافتهن لهذه المجموعة.</p>
+    <div className="list">
+      ${students.map(u=>{
+        const inGroup=(u.groupIds||[]).includes(group.id);
+        return html`<div key=${u.id} className="row" style=${{background:'var(--ink-3)'}}>
+          <span className="av">${initials(u.name)}</span>
+          <div className="grow"><b>${u.name}</b><span>${currentStreak(db,u.id)>0?html`🔥 ستريك ${currentStreak(db,u.id)}`:'لا شعلة'}</span></div>
+          <button className=${'btn sm '+(inGroup?'bad':'ok')} onClick=${()=>{toggleGroupMember(u.id,group.id);toast(inGroup?'تم إزالة '+u.name:'تمت إضافة '+u.name);}}>
+            ${inGroup?html`<${Icon} n="x" s=${14}/>`:html`<${Icon} n="plus" s=${14}/>`} ${inGroup?'إزالة':'إضافة'}
+          </button>
+        </div>`;
+      })}
+    </div>
+    <div className="foot" style=${{marginTop:18}}><button className="btn ghost" onClick=${onClose}>إغلاق</button></div>
+  <//>`;
+}
+function TGroups(){
+  const {db,deleteGroup,toast}=useApp();
+  const [edit,setEdit]=useState(null); // 'new' | group object
+  const [assign,setAssign]=useState(null); // group object
+  return html`<div>
+    <${Head} title="إدارة المجموعات" sub="أنشئي مجموعات، وأضيفي الطالبات، وتابعي شعلة كل مجموعة.">
+      <button className="btn" onClick=${()=>setEdit('new')}><${Icon} n="plus" s=${16}/> مجموعة جديدة</button>
+    <//>
+
+    ${db.groups.length===0?html`<${Empty} title="لا توجد مجموعات بعد" text="اضغطي «مجموعة جديدة» للبدء."/>`:html`
+      <div style=${{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:18}}>
+        ${db.groups.map(g=>{
+          const gs=groupStreak(db,g.id);
+          const members=db.users.filter(u=>u.role==='student'&&u.status==='approved'&&(u.groupIds||[]).includes(g.id));
+          return html`<div key=${g.id} className="card group-card" style=${{'--gc':g.color}}>
+            <div className="group-header">
+              <div className="group-emblem">${g.emblem}</div>
+              <div style=${{flex:1}}>
+                <h3>${g.name}</h3>
+                <p>${g.desc||'مجموعة'} • ${members.length} أعضاء</p>
+              </div>
+            </div>
+            <div style=${{display:'flex', gap:8, flexWrap:'wrap'}}>
+              <span className="group-streak-total">🔥 ${gs.total} إجمالي الستريك</span>
+              <span className="badge plain">متوسط: ${gs.avg}</span>
+            </div>
+            <div className="group-members">
+              ${members.length===0?html`<div className="group-empty">لا توجد طالبات في هذه المجموعة</div>`:members.map(m=>{
+                const st=currentStreak(db,m.id);
+                return html`<div key=${m.id} className="member-row">
+                  <span className="av">${initials(m.name)}</span>
+                  <div className="info"><b>${m.name}</b><span>${LEVELS[levelIdx(pointsOf(db,m.id))].name}</span></div>
+                  <${FireBadge} n=${st}/>
+                </div>`;
+              })}
+            </div>
+            <div style=${{display:'flex', gap:8, flexWrap:'wrap', marginTop:6}}>
+              <button className="btn soft sm" onClick=${()=>setAssign(g)}><${Icon} n="users" s=${14}/> إدارة الأعضاء</button>
+              <button className="btn ghost sm" onClick=${()=>setEdit(g)}><${Icon} n="edit" s=${14}/> تعديل</button>
+              <button className="btn ghost sm" onClick=${()=>{if(confirm('حذف '+g.name+'؟')){deleteGroup(g.id);toast('تم حذف المجموعة');}}}><${Icon} n="trash" s=${14}/></button>
+            </div>
+          </div>`;
+        })}
+      </div>
+    `}
+
+    ${edit&&html`<${TGroupModal} group=${edit==='new'?null:edit} onClose=${()=>setEdit(null)}/>`}
+    ${assign&&html`<${TAssignModal} group=${assign} onClose=${()=>setAssign(null)}/>`}
+  </div>`;
+}
+
+/* ---------- Teacher: requests ---------- */
+function TRequests(){
+  const {db,approve,reject,toast}=useApp();
+  const [sec,setSec]=useState({});
+  const pend=db.users.filter(u=>u.role==='student'&&u.status==='pending');
+  const rej=db.users.filter(u=>u.role==='student'&&u.status==='rejected');
+  const pick=u=>sec[u.id]||(db.sections[0]?db.sections[0].id:'');
+  const Sel=({u})=>html`<select className="select" value=${pick(u)} onChange=${e=>setSec({...sec,[u.id]:e.target.value})} aria-label="اختيار الفصل">${db.sections.length===0&&html`<option value="">بدون فصل</option>`}${db.sections.map(s=>html`<option key=${s.id} value=${s.id}>${s.name}</option>`)}</select>`;
+  return html`<div>
+    <${Head} title="طلبات التسجيل" sub="اقبلي الطالبة وحدّدي فصلها، أو ارفضي الطلب."/>
+    <div className="list">
+      ${pend.length===0&&html`<${Empty} title="لا توجد طلبات معلّقة" text="عندما تسجّل طالبة جديدة سيظهر طلبها هنا."/>`}
+      ${pend.map(u=>html`<div key=${u.id} className="row"><span className="av">${initials(u.name)}</span><div className="grow"><b>${u.name}</b><span dir="ltr" style=${{textAlign:'right'}}>${u.email}</span></div><div className="acts"><${Sel} u=${u}/><button className="btn ok sm" onClick=${()=>{approve(u.id,pick(u)||null);toast('تم قبول '+u.name);}}><${Icon} n="check" s=${14}/> قبول</button><button className="btn bad sm" onClick=${()=>{reject(u.id);toast('تم رفض الطلب');}}><${Icon} n="x" s=${14}/> رفض</button></div></div>`)}
+    </div>
+    ${rej.length>0&&html`<h3 style=${{margin:'28px 0 12px',color:'var(--paper)',fontFamily:'var(--display)'}}>الطلبات المرفوضة</h3><div className="list">${rej.map(u=>html`<div key=${u.id} className="row"><span className="av">${initials(u.name)}</span><div className="grow"><b>${u.name}</b><span dir="ltr" style=${{textAlign:'right'}}>${u.email}</span></div><div className="acts"><${Sel} u=${u}/><button className="btn soft sm" onClick=${()=>{approve(u.id,pick(u)||null);toast('تمت الموافقة على '+u.name);}}>قبول الآن</button></div></div>`)}</div>`}
+  </div>`;
+}
+
+/* ---------- Teacher: points modal ---------- */
+function PointsModal({studentId,onClose}){
+  const {db,givePoints,toast}=useApp();
+  const students=db.users.filter(u=>u.role==='student'&&u.status==='approved');
+  const [sid,setSid]=useState(studentId||(students[0]?students[0].id:''));
+  const [amt,setAmt]=useState(10);
+  const [why,setWhy]=useState('');
+  const go=()=>{ if(!sid) return toast('اختاري طالبة','bad'); if(!Number(amt)) return toast('اكتبي عدد النقاط','bad'); givePoints({studentId:sid,amount:Number(amt),reason:why.trim()||'مكافأة من المعلمة'}); const st=students.find(u=>u.id===sid); toast('تم منح '+amt+' نقطة إلى '+(st?st.name.split(' ')[0]:'')); onClose(); };
+  return html`<${Modal} title="منح نقاط" onClose=${onClose}>
+    <div className="field"><label htmlFor="ps">الطالبة</label><select id="ps" className="select" value=${sid} onChange=${e=>setSid(e.target.value)}>${students.map(u=>html`<option key=${u.id} value=${u.id}>${u.name}</option>`)}</select></div>
+    <div className="field"><span className="lbl">عدد النقاط (يمكن كتابة رقم سالب للخصم)</span>
+      <div className="chips">${[5,10,20,50].map(n=>html`<button key=${n} className=${cx('chip',Number(amt)===n&&'on')} onClick=${()=>setAmt(n)}>+${n}</button>`)}</div>
+      <input className="input" type="number" value=${amt} onChange=${e=>setAmt(e.target.value)} aria-label="عدد النقاط"/></div>
+    <div className="field"><label htmlFor="pr">السبب (يظهر للطالبة)</label><input id="pr" className="input" value=${why} onChange=${e=>setWhy(e.target.value)} placeholder="مثال: مشاركة مميزة"/></div>
+    <div className="foot"><button className="btn" onClick=${go}><${Icon} n="star" s=${15} fill=${true}/> منح النقاط</button><button className="btn ghost" onClick=${onClose}>إلغاء</button></div>
+  <//>`;
+}
+
+/* ---------- Teacher: students ---------- */
+function TStudents(){
+  const {db,setSection,removeStudent,toast}=useApp();
+  const [q,setQ]=useState(''); const [sf,setSf]=useState('all'); const [pm,setPm]=useState(null);
+  const list=db.users.filter(u=>u.role==='student'&&u.status==='approved'&&u.name.includes(q)&&(sf==='all'||(u.sectionId||'none')===sf));
+  return html`<div>
+    <${Head} title="الطالبات" sub="إدارة الطالبات المقبولات وفصولهن ونقاطهن وشعلهن."/>
+    <div className="row" style=${{marginBottom:16}}><div className="inp grow" style=${{flex:1}}><${Icon} n="users" s=${16}/><input className="input" placeholder="ابحثي بالاسم" value=${q} onChange=${e=>setQ(e.target.value)} aria-label="بحث"/></div>
+      <select className="select" style=${{width:'auto'}} value=${sf} onChange=${e=>setSf(e.target.value)} aria-label="تصفية حسب الفصل"><option value="all">كل الفصول</option>${db.sections.map(s=>html`<option key=${s.id} value=${s.id}>${s.name}</option>`)}<option value="none">بدون فصل</option></select></div>
+    <div className="list">
+      ${list.length===0&&html`<${Empty} title="لا نتائج" text="جرّبي تغيير البحث أو الفصل."/>`}
+      ${list.map(u=>{const p=pointsOf(db,u.id);const st=currentStreak(db,u.id);return html`<div key=${u.id} className="row"><span className="av">${initials(u.name)}</span>
+        <div className="grow"><b>${u.name}</b><span>المستوى: ${LEVELS[levelIdx(p)].name}</span></div>
+        <span className="pts"><${Icon} n="star" s=${12} fill=${true}/> ${p}</span>
+        <${FireBadge} n=${st}/>
+        <div className="acts"><select className="select" value=${u.sectionId||''} onChange=${e=>{setSection(u.id,e.target.value||null);toast('تم تحديث الفصل');}} aria-label="الفصل"><option value="">بدون فصل</option>${db.sections.map(s=>html`<option key=${s.id} value=${s.id}>${s.name}</option>`)}</select>
+        <button className="btn soft sm" onClick=${()=>setPm(u.id)}>منح نقاط</button>
+        <button className="iconbtn" aria-label=${'حذف '+u.name} onClick=${()=>{if(confirm('حذف '+u.name+' وكل بياناتها؟')){removeStudent(u.id);toast('تم حذف الطالبة');}}}><${Icon} n="trash" s=${15}/></button></div></div>`;})}
+    </div>
+    ${pm&&html`<${PointsModal} studentId=${pm} onClose=${()=>setPm(null)}/>`}
+  </div>`;
+}
+
+/* ---------- Teacher: classes ---------- */
+function TClasses(){
+  const {db,addSection,renameSection,deleteSection,toast}=useApp();
+  const [name,setName]=useState('');
+  const add=()=>{ if(!name.trim()) return toast('اكتبي اسم الفصل','bad'); addSection(name.trim()); setName(''); toast('تمت إضافة الفصل'); };
+  return html`<div>
+    <${Head} title="الفصول" sub="قسّمي الطالبات إلى فصول أو مجموعات."/>
+    <div className="row" style=${{marginBottom:16}} onKeyDown=${e=>{if(e.key==='Enter')add();}}><input className="input grow" style=${{flex:1}} placeholder="اسم الفصل الجديد، مثال: الفصل ج" value=${name} onChange=${e=>setName(e.target.value)} aria-label="اسم الفصل"/><button className="btn" onClick=${add}><${Icon} n="plus" s=${16}/> إضافة فصل</button></div>
+    <div className="list">
+      ${db.sections.length===0&&html`<${Empty} title="لا توجد فصول" text="أضيفي أول فصل ثم انقلي الطالبات إليه."/>`}
+      ${db.sections.map(s=>{const n=db.users.filter(u=>u.role==='student'&&u.sectionId===s.id).length;return html`<div key=${s.id} className="row"><span className="ficon"><${Icon} n="users" s=${16}/></span>
+        <input className="input grow" style=${{flex:1,maxWidth:340}} defaultValue=${s.name} onBlur=${e=>{const v=e.target.value.trim(); if(v&&v!==s.name){renameSection(s.id,v);toast('تم تعديل الاسم');}}} aria-label="اسم الفصل"/>
+        <span className="badge plain">${n} طالبة</span>
+        <button className="iconbtn" aria-label=${'حذف '+s.name} onClick=${()=>{if(confirm('حذف '+s.name+'؟ ستبقى الطالبات دون فصل.')){deleteSection(s.id);toast('تم حذف الفصل');}}}><${Icon} n="trash" s=${15}/></button></div>`;})}
+    </div></div>`;
+}
+
+/* ---------- Teacher: content ---------- */
+function AddItemModal({unit,kind,onClose}){
+  const {addItem,toast}=useApp();
+  const [t,setT]=useState(''); const [url,setUrl]=useState(''); const [d,setD]=useState(''); const [pts,setPts]=useState(10); const [file,setFile]=useState({fileName:'',dataUrl:''});
+  const needUrl=kind==='link'||kind==='video';
+  const save=()=>{
+    if(!t.trim()) return toast('اكتبي عنوانًا','bad');
+    if(needUrl&&!/^https?:\/\//i.test(url.trim())) return toast('الرابط يجب أن يبدأ بـ https://','bad');
+    if(kind==='image'&&!file.dataUrl) return toast('اختاري صورة','bad');
+    if(kind==='pdf'&&!file.dataUrl&&!/^https?:\/\//i.test(url.trim())) return toast('ارفعي ملف PDF أو ضعي رابطه','bad');
+    addItem({unitId:unit.id,kind,title:t.trim(),desc:d.trim(),url:file.dataUrl?'':url.trim(),dataUrl:file.dataUrl,fileName:file.fileName,pts:Number(pts)||0});
+    toast('تمت الإضافة'); onClose();
+  };
+  return html`<${Modal} title=${'إضافة '+KINDS[kind].one+' — الوحدة '+unit.n} onClose=${onClose}>
+    <div className="field"><label htmlFor="at">العنوان</label><input id="at" className="input" value=${t} onChange=${e=>setT(e.target.value)} placeholder="عنوان يفهمه الطالبات"/></div>
+    ${needUrl&&html`<div className="field"><label htmlFor="au">الرابط</label><input id="au" className="input" dir="ltr" style=${{textAlign:'right'}} value=${url} onChange=${e=>setUrl(e.target.value)} placeholder="https://"/></div>`}
+    ${kind==='pdf'&&html`<div className="field"><label>ملف PDF</label><${FilePick} accept="application/pdf" value=${file.fileName} onPick=${setFile} label="ارفعي ملف PDF"/></div><div className="field"><label htmlFor="au2">أو رابط خارجي للملف</label><input id="au2" className="input" dir="ltr" style=${{textAlign:'right'}} value=${url} onChange=${e=>setUrl(e.target.value)} placeholder="https://"/></div>`}
+    ${kind==='image'&&html`<div className="field"><label>الصورة</label><${FilePick} accept="image/*" value=${file.fileName} onPick=${setFile} label="ارفعي صورة"/></div>`}
+    <div className="field"><label htmlFor="ad">${kind==='homework'?'وصف الواجب':'وصف مختصر (اختياري)'}</label><textarea id="ad" className="textarea" value=${d} onChange=${e=>setD(e.target.value)}/></div>
+    ${kind==='homework'&&html`<div className="field"><label htmlFor="ap">النقاط عند القبول</label><input id="ap" type="number" className="input" value=${pts} onChange=${e=>setPts(e.target.value)}/></div>`}
+    <div className="foot"><button className="btn" onClick=${save}><${Icon} n="plus" s=${16}/> إضافة</button><button className="btn ghost" onClick=${onClose}>إلغاء</button></div>
+  <//>`;
+}
+function TContent(){
+  const {db,saveUnit,deleteItem,toast}=useApp();
+  const [uid_,setU]=useState('u1'); const [add,setAdd]=useState(null);
+  const unit=db.units.find(u=>u.id===uid_);
+  const color=UNIT_COLORS[unit.n-1];
+  return html`<div>
+    <${Head} title="المحتوى" sub="أضيفي الروابط والملفات والصور والواجبات لكل وحدة."/>
+    <div className="tabs">${db.units.map(u=>html`<button key=${u.id} className=${cx('tab u',uid_===u.id&&'on')} style=${{'--u':UNIT_COLORS[u.n-1]}} onClick=${()=>setU(u.id)}>الوحدة ${u.n}</button>`)}</div>
+    <div className="card panel" style=${{marginBottom:18,borderTop:'2px solid '+color}} key=${unit.id}>
+      <div className="two"><div className="field"><label htmlFor="ut">عنوان الوحدة</label><input id="ut" className="input" defaultValue=${unit.title} onBlur=${e=>{if(e.target.value.trim()&&e.target.value!==unit.title){saveUnit(unit.id,{title:e.target.value.trim()});toast('تم حفظ العنوان');}}}/></div>
+      <div className="field"><label htmlFor="ud">وصف الوحدة</label><input id="ud" className="input" defaultValue=${unit.desc} onBlur=${e=>{if(e.target.value!==unit.desc){saveUnit(unit.id,{desc:e.target.value});toast('تم حفظ الوصف');}}}/></div></div>
+    </div>
+    ${unit.id==='u7'?html`<div className="card panel"><${Empty} title="هذه الوحدة لرفع ملفات الطالبات" text="لا تحتاج محتوى منك. الملفات التي ترفعها الطالبات تصلك في قسم التصحيح."/></div>`
+    :html`<div style=${{display:'flex',flexDirection:'column',gap:16}}>${unit.kinds.map(k=>{const list=db.items.filter(i=>i.unitId===unit.id&&i.kind===k);return html`<div key=${k} className="card panel">
+      <h3><span style=${{display:'flex',gap:10,alignItems:'center'}}><span className="ficon" style=${{width:34,height:34}}><${Icon} n=${KINDS[k].icon} s=${16}/></span>${KINDS[k].label} <span className="badge plain">${list.length}</span></span><button className="btn soft sm" onClick=${()=>setAdd(k)}><${Icon} n="plus" s=${14}/> إضافة</button></h3>
+      <div className="list">${list.length===0&&html`<${Empty} title=${KINDS[k].empty} text="اضغطي إضافة لتبدئي."/>`}
+        ${list.map(it=>html`<div key=${it.id} className="item">${it.dataUrl&&it.kind==='image'?html`<span className="thumb"><img src=${it.dataUrl} alt=""/></span>`:html`<span className="ficon"><${Icon} n=${KINDS[k].icon} s=${16}/></span>`}<div className="it"><b>${it.title}</b><span>${it.kind==='homework'?it.pts+' نقطة':(it.url||it.fileName||'')}</span></div><button className="iconbtn" aria-label=${'حذف '+it.title} onClick=${()=>{if(confirm('حذف «'+it.title+'»؟')){deleteItem(it.id);toast('تم الحذف');}}}><${Icon} n="trash" s=${15}/></button></div>`)}</div></div>`;})}</div>`}
+    ${add&&html`<${AddItemModal} unit=${unit} kind=${add} onClose=${()=>setAdd(null)}/>`}
+  </div>`;
+}
+
+/* ---------- Teacher: grading ---------- */
+function GradeCard({s}){
+  const {db,review,openViewer,toast}=useApp();
+  const st=db.users.find(u=>u.id===s.studentId), it=db.items.find(i=>i.id===s.itemId), u=db.units.find(x=>x.id===s.unitId);
+  const sec=st&&db.sections.find(x=>x.id===st.sectionId);
+  const [cm,setCm]=useState(s.comment||''); const [pt,setPt]=useState(s.status==='accepted'?s.points:(it&&it.pts)||10); const [edit,setEdit]=useState(s.status==='pending');
+  const done=(status)=>{ if(status==='rejected'&&!cm.trim()) return toast('اكتبي تعليقًا يوضح المطلوب تعديله','bad'); review(s.id,{status,comment:cm.trim(),points:Number(pt)||0}); toast(status==='accepted'?'تم قبول التسليم':'تم رد التسليم للتعديل'); setEdit(false); };
+  return html`<div className="card subcard">
+    <div className="meta"><div><b>${st?st.name:'—'}</b><div style=${{fontSize:13,color:'var(--muted)'}}>${sec?sec.name+' • ':''}الوحدة ${u?u.n:''} • ${fmtDate(s.createdAt)}</div></div><${StatusBadge} s=${s.status}/></div>
+    <div><b style=${{color:'var(--paper)'}}>${itemTitle(db,s)}</b></div>
+    ${s.note&&html`<div className="txt">${s.note}</div>`}
+    ${s.dataUrl&&html`<div><button className="btn soft sm" onClick=${()=>openViewer({title:s.fileName||'ملف الطالبة',kind:/\.(png|jpe?g|gif|svg|webp)$/i.test(s.fileName||'')||s.dataUrl.startsWith('data:image')?'image':'pdf',dataUrl:s.dataUrl,fileName:s.fileName})}><${Icon} n="file" s=${14}/> فتح الملف (${s.fileName})</button></div>`}
+    ${!s.dataUrl&&s.fileName&&html`<div style=${{fontSize:13.5,color:'var(--muted)'}}>الملف: ${s.fileName}</div>`}
+    ${edit?html`<div className="two"><div className="field" style=${{marginBottom:0}}><label>تعليقك</label><textarea className="textarea" value=${cm} onChange=${e=>setCm(e.target.value)} placeholder="اكتبي تعليقًا للطالبة"/></div>
+      <div className="field" style=${{marginBottom:0}}><label>النقاط عند القبول</label><input className="input" type="number" value=${pt} onChange=${e=>setPt(e.target.value)}/></div></div>
+      <div style=${{display:'flex',gap:8,flexWrap:'wrap'}}><button className="btn ok" onClick=${()=>done('accepted')}><${Icon} n="check" s=${16}/> قبول</button><button className="btn bad" onClick=${()=>done('rejected')}><${Icon} n="x" s=${16}/> رفض وطلب تعديل</button>${s.status!=='pending'&&html`<button className="btn ghost" onClick=${()=>setEdit(false)}>إلغاء</button>`}</div>`
+    :html`${s.comment&&html`<div className="txt"><b>تعليقك: </b>${s.comment}</div>`}<div style=${{display:'flex',gap:8,alignItems:'center',flexWrap:'wrap'}}>${s.status==='accepted'&&html`<span className="pts"><${Icon} n="star" s=${12} fill=${true}/> +${s.points}</span>`}<button className="btn ghost sm" onClick=${()=>setEdit(true)}>تعديل القرار</button></div>`}
+  </div>`;
+}
+function TGrading(){
+  const {db}=useApp();
+  const [f,setF]=useState('pending');
+  const all=[...db.submissions].sort((a,b)=>b.createdAt-a.createdAt);
+  const list=f==='all'?all:all.filter(s=>s.status===f);
+  const c=s=>all.filter(x=>x.status===s).length;
+  return html`<div>
+    <${Head} title="تصحيح الواجبات" sub="اقبلي أو ارفضي، واكتبي تعليقًا يصل إلى الطالبة."/>
+    <div className="tabs">${[['pending','بانتظار التصحيح ('+c('pending')+')'],['accepted','المقبولة ('+c('accepted')+')'],['rejected','المردودة ('+c('rejected')+')'],['all','الكل ('+all.length+')']].map(x=>html`<button key=${x[0]} className=${cx('tab',f===x[0]&&'on')} onClick=${()=>setF(x[0])}>${x[1]}</button>`)}</div>
+    <div className="list">${list.length===0&&html`<${Empty} title="لا شيء هنا" text="لا توجد تسليمات بهذه الحالة."/>`}${list.map(s=>html`<${GradeCard} key=${s.id+s.status} s=${s}/>`)}</div>
+  </div>`;
+}
+
+/* ---------- Teacher: learning journey ---------- */
+function TJourney(){
+  const {db,deletePoint,toast}=useApp();
+  const [pm,setPm]=useState(false);
+  const students=db.users.filter(u=>u.role==='student'&&u.status==='approved').map(u=>({u,p:pointsOf(db,u.id),streak:currentStreak(db,u.id)})).sort((a,b)=>b.p-a.p);
+  const max=Math.max(1,...students.map(x=>x.p));
+  const log=[...db.points].sort((a,b)=>b.at-a.at).slice(0,12);
+  return html`<div>
+    <${Head} title="رحلة التعلّم" sub="امنحي النقاط وتابعي تقدّم كل طالبة. تظهر النقاط في صفحتها فورًا."><button className="btn" onClick=${()=>setPm(true)}><${Icon} n="star" s=${15} fill=${true}/> منح نقاط</button><//>
+    <div className="cols">
+      <div className="card panel"><h3>ترتيب الطالبات بالنقاط</h3>
+        ${students.length===0?html`<${Empty} title="لا طالبات بعد" text="اقبلي طلبات التسجيل أولًا."/>`:students.map((x,i)=>html`<div key=${x.u.id} className="lb"><span className="rk">${i+1}</span><div style=${{flex:1}}><div style=${{display:'flex',justifyContent:'space-between',gap:8,alignItems:'center'}}><b style=${{fontWeight:600,color:'var(--paper)'}}>${x.u.name}</b><span style=${{display:'flex',gap:6,alignItems:'center'}}><${FireBadge} n=${x.streak}/><span style=${{color:'var(--muted)',fontSize:13}}>${LEVELS[levelIdx(x.p)].name}</span></span></div><div className="bar"><i style=${{width:Math.round(x.p/max*100)+'%'}}></i></div></div><span className="pts">${x.p}</span></div>`)}</div>
+      <div className="card panel"><h3>آخر حركات النقاط</h3>
+        ${log.length===0?html`<${Empty} title="لا حركات بعد" text="امنحي أول نقاط لتظهر هنا."/>`:html`<div className="log">${log.map(p=>{const s=db.users.find(u=>u.id===p.studentId);return html`<div key=${p.id} className="l"><span className=${'amt '+(p.amount>=0?'plus':'minus')}>${p.amount>0?'+':''}${p.amount}</span><div style=${{flex:1,minWidth:0}}><b style=${{fontWeight:500,color:'var(--paper)'}}>${s?s.name:''}</b><div style=${{fontSize:12.5,color:'var(--muted)'}}>${p.reason} • ${fmtDate(p.at)}</div></div><button className="iconbtn" aria-label="حذف الحركة" onClick=${()=>{deletePoint(p.id);toast('تم حذف الحركة');}}><${Icon} n="trash" s=${14}/></button></div>`;})}</div>`}</div>
+    </div>
+    ${pm&&html`<${PointsModal} onClose=${()=>setPm(false)}/>`}
+  </div>`;
+}
+
+/* ---------- Viewer ---------- */
+function Viewer({item,onClose}){
+  const src=useMemo(()=>item.dataUrl?(item.kind==='image'?item.dataUrl:blobUrl(item.dataUrl)):'',[item]);
+  return html`<${Modal} title=${item.title} onClose=${onClose} wide=${true}><div className="viewer">
+    ${item.kind==='image'?html`<img src=${src} alt=${item.title}/>`:html`<iframe src=${src} title=${item.title}></iframe>`}
+    <p style=${{color:'var(--muted)',fontSize:13,marginTop:10}}>إن لم يظهر الملف في هذه النافذة فقد يمنع المتصفح عرضه هنا.</p></div><//>`;
+}
+
+/* ---------- App ---------- */
+function App(){
+  const [db,setDb]=useState(()=>{const s=store.get(KEY);return s&&s.v===2?s:seed();});
+  const [sid,setSid]=useState(()=>store.get(SKEY));
+  const [page,setPage]=useState('home');
+  const [toasts,setToasts]=useState([]);
+  const [viewer,setViewer]=useState(null);
+  const [theme,setTheme]=useState(()=>store.get(TKEY)||'auto');
+  const warned=React.useRef(false);
+  useEffect(()=>{ if(!store.set(KEY,db)&&!warned.current){warned.current=true;toast('تعذّر حفظ البيانات في المتصفح، قد تكون الملفات كبيرة','bad');} },[db]);
+  useEffect(()=>{ if(theme==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme',theme); },[theme]);
+  const toast=(m,kind)=>{const id=uid();setToasts(t=>[...t,{id,m,kind}]);setTimeout(()=>setToasts(t=>t.filter(x=>x.id!==id)),3200);};
+  const me=db.users.find(u=>u.id===sid&&u.status==='approved')||null;
+  const upd=fn=>setDb(d=>fn(d));
+  const A={
+    db,me,toast,openViewer:setViewer,theme,
+    toggleTheme:()=>{const dark=theme==='dark'||(theme==='auto'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);const n=dark?'light':'dark';setTheme(n);store.set(TKEY,n);},
+    login:(role,email,password)=>{
+      const u=db.users.find(x=>x.email.toLowerCase()===email.trim().toLowerCase()&&x.password===password);
+      if(!u||u.role!==role) return {error:role==='teacher'?'بيانات المعلمة غير صحيحة.':'البريد الإلكتروني أو كلمة المرور غير صحيحة.'};
+      if(u.status!=='approved') return {status:u.status};
+      store.set(SKEY,u.id); setSid(u.id); setPage(u.role==='teacher'?'dash':'home'); return {ok:true};
+    },
+    logout:()=>{store.del(SKEY);setSid(null);},
+    register:f=>{
+      if(db.users.some(u=>u.email.toLowerCase()===f.email.trim().toLowerCase())) return {error:'هذا البريد مسجّل من قبل. جرّبي تسجيل الدخول.'};
+      upd(d=>({...d,users:[...d.users,{id:uid(),role:'student',name:f.name.trim(),email:f.email.trim(),password:f.password,status:'pending',sectionId:null,groupIds:[],createdAt:Date.now()}]}));
+      return {ok:true};
+    },
+    approve:(id,sec)=>upd(d=>({...d,users:d.users.map(u=>u.id===id?{...u,status:'approved',sectionId:sec}:u)})),
+    reject:id=>upd(d=>({...d,users:d.users.map(u=>u.id===id?{...u,status:'rejected'}:u)})),
+    setSection:(id,sec)=>upd(d=>({...d,users:d.users.map(u=>u.id===id?{...u,sectionId:sec}:u)})),
+    removeStudent:id=>upd(d=>({...d,users:d.users.filter(u=>u.id!==id),submissions:d.submissions.filter(s=>s.studentId!==id),points:d.points.filter(p=>p.studentId!==id)})),
+    addSection:name=>upd(d=>({...d,sections:[...d.sections,{id:'c'+uid(),name}]})),
+    renameSection:(id,name)=>upd(d=>({...d,sections:d.sections.map(s=>s.id===id?{...s,name}:s)})),
+    deleteSection:id=>upd(d=>({...d,sections:d.sections.filter(s=>s.id!==id),users:d.users.map(u=>u.sectionId===id?{...u,sectionId:null}:u)})),
+    /* مجموعات */
+    addGroup:g=>upd(d=>({...d,groups:[...d.groups,{...g,id:'g'+uid(),createdAt:Date.now()}]})),
+    updateGroup:(id,patch)=>upd(d=>({...d,groups:d.groups.map(g=>g.id===id?{...g,...patch}:g)})),
+    deleteGroup:id=>upd(d=>({...d,groups:d.groups.filter(g=>g.id!==id),users:d.users.map(u=>u.groupIds&&u.groupIds.includes(id)?{...u,groupIds:u.groupIds.filter(x=>x!==id)}:u)})),
+    toggleGroupMember:(uidS,gid)=>upd(d=>({...d,users:d.users.map(u=>{
+      if(u.id!==uidS) return u;
+      const has=(u.groupIds||[]).includes(gid);
+      return {...u, groupIds: has ? (u.groupIds||[]).filter(x=>x!==gid) : [...(u.groupIds||[]),gid]};
+    })})),
+    saveUnit:(id,patch)=>upd(d=>({...d,units:d.units.map(u=>u.id===id?{...u,...patch}:u)})),
+    addItem:it=>upd(d=>({...d,items:[...d.items,{...it,id:uid()}]})),
+    deleteItem:id=>upd(d=>({...d,items:d.items.filter(i=>i.id!==id)})),
+    submit:x=>upd(d=>{
+      if(x.replace) return {...d,submissions:d.submissions.map(s=>s.id===x.replace?{...s,note:x.note,fileName:x.fileName,dataUrl:x.dataUrl,status:'pending',createdAt:Date.now(),reviewedAt:null}:s)};
+      const ex=x.itemId!=='u7'&&d.submissions.find(s=>s.studentId===x.studentId&&s.itemId===x.itemId);
+      if(ex) return d;
+      return {...d,submissions:[...d.submissions,{id:uid(),studentId:x.studentId,itemId:x.itemId,unitId:x.unitId,note:x.note,fileName:x.fileName,dataUrl:x.dataUrl,status:'pending',comment:'',points:0,createdAt:Date.now()}]};
+    }),
+    review:(id,r)=>upd(d=>{
+      const s0=d.submissions.find(s=>s.id===id);
+      const subs=d.submissions.map(s=>s.id===id?{...s,status:r.status,comment:r.comment,points:r.status==='accepted'?r.points:0,reviewedAt:Date.now()}:s);
+      let pts=d.points.filter(p=>p.subId!==id);
+      if(r.status==='accepted'&&r.points>0) pts=[{id:uid(),studentId:s0.studentId,amount:r.points,reason:'تصحيح: '+itemTitle(d,s0),at:Date.now(),subId:id},...pts];
+      return {...d,submissions:subs,points:pts};
+    }),
+    givePoints:p=>upd(d=>({...d,points:[{id:uid(),studentId:p.studentId,amount:p.amount,reason:p.reason,at:Date.now()},...d.points]})),
+    deletePoint:id=>upd(d=>({...d,points:d.points.filter(p=>p.id!==id)})),
+    resetDemo:()=>{setDb(seed());}
+  };
+  const pendReq=db.users.filter(u=>u.role==='student'&&u.status==='pending').length;
+  const pendSub=db.submissions.filter(s=>s.status==='pending').length;
+  const tNav=[
+    {id:'dash',label:'نظرة عامة',icon:'grid'},
+    {id:'requests',label:'الطلبات',icon:'inbox',count:pendReq},
+    {id:'students',label:'الطالبات',icon:'users'},
+    {id:'classes',label:'الفصول',icon:'layers'},
+    {id:'groups',label:'المجموعات',icon:'flag'},
+    {id:'content',label:'المحتوى',icon:'book'},
+    {id:'grading',label:'التصحيح',icon:'edit',count:pendSub},
+    {id:'journey',label:'رحلة التعلّم',icon:'award'}
+  ];
+  const sNav=[
+    {id:'home',label:'الوحدات',icon:'home'},
+    {id:'work',label:'تسليماتي',icon:'edit'},
+    {id:'groups',label:'المجموعات',icon:'flag'},
+    {id:'journey',label:'رحلتي',icon:'map'}
+  ];
+  let body;
+  if(!me) body=html`<${Auth}/>`;
+  else if(me.role==='teacher'){
+    const pages={
+      dash:html`<${TDash} go=${setPage}/>`,
+      requests:html`<${TRequests}/>`,
+      students:html`<${TStudents}/>`,
+      classes:html`<${TClasses}/>`,
+      groups:html`<${TGroups}/>`,
+      content:html`<${TContent}/>`,
+      grading:html`<${TGrading}/>`,
+      journey:html`<${TJourney}/>`
+    };
+    body=html`<${Shell} nav=${tNav} page=${page} setPage=${setPage}>${pages[page]||pages.dash}
+      <div style=${{marginTop:40,paddingTop:20,borderTop:'1px solid var(--line)'}}><button className="btn ghost sm" onClick=${()=>{if(confirm('سيتم مسح كل التعديلات وإعادة البيانات التجريبية. متابعة؟')){A.resetDemo();toast('أُعيدت البيانات التجريبية');}}}>إعادة ضبط البيانات التجريبية</button></div><//>`;
+  } else {
+    const pages={
+      home:html`<${StudentHome}/>`,
+      work:html`<${StudentWork}/>`,
+      groups:html`<${StudentGroups}/>`,
+      journey:html`<${StudentJourney}/>`
+    };
+    body=html`<${Shell} nav=${sNav} page=${page} setPage=${setPage}>${pages[page]||pages.home}<//>`;
+  }
+  return html`<${Ctx.Provider} value=${A}>${body}
+    ${viewer&&html`<${Viewer} item=${viewer} onClose=${()=>setViewer(null)}/>`}
+    <div className="toasts" aria-live="polite">${toasts.map(t=>html`<div key=${t.id} className=${cx('toast',t.kind)}>${t.m}</div>`)}</div>
+  <//>`;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
